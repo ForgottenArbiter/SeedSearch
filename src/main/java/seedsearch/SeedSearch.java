@@ -1,15 +1,12 @@
 package seedsearch;
 
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
-import com.megacrit.cardcrawl.core.CardCrawlGame;
-import com.megacrit.cardcrawl.screens.mainMenu.MainMenuScreen;
 
 import java.util.ArrayList;
 
 @SpireInitializer
 public class SeedSearch {
 
-    public static SeedSearchScreen screen;
     public static boolean loadingEnabled = true;
     public static SeedRunner runner;
     public static SearchSettings settings;

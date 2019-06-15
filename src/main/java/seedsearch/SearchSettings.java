@@ -7,10 +7,11 @@ import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.relics.JuzuBracelet;
 import com.megacrit.cardcrawl.relics.Lantern;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SearchSettings {
 

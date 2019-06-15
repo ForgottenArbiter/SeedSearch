@@ -4,18 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.backends.headless.HeadlessNativesLoader;
-import com.badlogic.gdx.backends.headless.HeadlessNet;
 import com.badlogic.gdx.backends.headless.mock.audio.MockAudio;
 import com.badlogic.gdx.backends.headless.mock.graphics.MockGraphics;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
-import com.megacrit.cardcrawl.core.ExceptionHandler;
 import com.megacrit.cardcrawl.desktop.DesktopLauncher;
-import static org.mockito.Mockito.mock;
 
-import java.util.logging.LogManager;
+import static org.mockito.Mockito.mock;
 
 @SpirePatch(
         clz= DesktopLauncher.class,

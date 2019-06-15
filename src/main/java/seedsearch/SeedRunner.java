@@ -1,6 +1,5 @@
 package seedsearch;
 
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.cards.colorless.JAX;
@@ -9,7 +8,6 @@ import com.megacrit.cardcrawl.cards.curses.*;
 import com.megacrit.cardcrawl.cards.red.Strike_Red;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.characters.CharacterManager;
-import com.megacrit.cardcrawl.characters.Ironclad;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.*;
@@ -25,7 +23,6 @@ import com.megacrit.cardcrawl.map.MapEdge;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.relics.*;
-import com.megacrit.cardcrawl.rewards.RewardItem;
 import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
 import com.megacrit.cardcrawl.rewards.chests.BossChest;
 import com.megacrit.cardcrawl.rooms.*;
@@ -34,7 +31,6 @@ import com.megacrit.cardcrawl.shop.Merchant;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.shop.StoreRelic;
-import seedsearch.patches.CombatRewardScreenPatch;
 import seedsearch.patches.EventHelperPatch;
 
 import java.lang.reflect.Field;
@@ -43,8 +39,6 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class SeedRunner {
@@ -979,13 +973,5 @@ public class SeedRunner {
         System.out.println("Mandatory cards:");
         System.out.println(player.masterDeck.group);
         System.out.println("#####################################");
-    }
-
-    public long seedsSearched() {
-        return currentSeed - settings.startSeed;
-    }
-
-    public long seedsToSearch() {
-        return settings.endSeed - settings.startSeed + 1;
     }
 }

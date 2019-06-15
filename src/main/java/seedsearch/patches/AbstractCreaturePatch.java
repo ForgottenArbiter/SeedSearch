@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 public class AbstractCreaturePatch {
 
     public static void Replace(AbstractCreature _instance, String atlasUrl, String skeletonUrl, float scale) {
-        //_instance.state = mock(AnimationState.class);
+
         _instance.state = new AnimationState();
 
         try {

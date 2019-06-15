@@ -2,7 +2,6 @@ package seedsearch.patches;
 
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.dungeons.TheBeyond;
 import com.megacrit.cardcrawl.dungeons.TheEnding;
 import javassist.CannotCompileException;
 import javassist.expr.ExprEditor;

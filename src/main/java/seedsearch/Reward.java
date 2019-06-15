@@ -1,7 +1,6 @@
 package seedsearch;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
-import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.util.ArrayList;
 
