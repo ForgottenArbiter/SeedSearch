@@ -1,17 +1,11 @@
 package seedsearch;
 
-import com.esotericsoftware.yamlbeans.YamlConfig;
-import com.esotericsoftware.yamlbeans.YamlException;
-import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonWriter;
 import com.megacrit.cardcrawl.cards.red.BodySlam;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.relics.JuzuBracelet;
 import com.megacrit.cardcrawl.relics.Lantern;
-import org.yaml.snakeyaml.DumperOptions;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -96,7 +90,7 @@ public class SearchSettings {
     public SearchSettings () {
     }
 
-    public void setDefaults() {
+    private void setDefaults() {
         relicsToBuy.add(JuzuBracelet.ID);
         requiredRelics.add(Lantern.ID);
         requiredAct1Cards.add(BodySlam.ID);
@@ -123,8 +117,7 @@ public class SearchSettings {
         }
     }
 
-    public void saveSettings () {
-        // Some defaults for example purposes
+    private void saveSettings () {
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(configName);

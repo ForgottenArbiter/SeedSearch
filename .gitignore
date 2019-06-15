@@ -25,7 +25,7 @@ hs_err_pid*
 # IntelliJ
 .idea/
 out/
-CommunicationMod.iml
+SeedSearch.iml
 
 # maven
 target/

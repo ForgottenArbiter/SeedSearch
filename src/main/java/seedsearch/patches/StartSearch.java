@@ -14,6 +14,7 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.dungeons.TheEnding;
 import com.megacrit.cardcrawl.helpers.*;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.integrations.steam.SteamIntegration;
@@ -128,6 +129,7 @@ public class StartSearch {
         //CardCrawlGame.mainMenuScreen = new MainMenuScreen();
         Logger abstractDungeonLogger = LogManager.getLogger(AbstractDungeon.class);
         Logger abstractPlayerLogger = LogManager.getLogger(AbstractPlayer.class);
+        Logger theEndingLogger = LogManager.getLogger(TheEnding.class);
         Logger unlockTrackerLogger = LogManager.getLogger(UnlockTracker.class);
         Logger roomTypeLogger = LogManager.getLogger(RoomTypeAssigner.class);
         Logger cardLibraryLogger = LogManager.getLogger(CardLibrary.class);
@@ -137,6 +139,7 @@ public class StartSearch {
         Logger cardHelperLogger = LogManager.getLogger(CardHelper.class);
         ((org.apache.logging.log4j.core.Logger)abstractDungeonLogger).setLevel(Level.OFF);
         ((org.apache.logging.log4j.core.Logger)abstractPlayerLogger).setLevel(Level.OFF);
+        ((org.apache.logging.log4j.core.Logger)theEndingLogger).setLevel(Level.OFF);
         ((org.apache.logging.log4j.core.Logger)unlockTrackerLogger).setLevel(Level.OFF);
         ((org.apache.logging.log4j.core.Logger)roomTypeLogger).setLevel(Level.OFF);
         ((org.apache.logging.log4j.core.Logger)cardLibraryLogger).setLevel(Level.OFF);
