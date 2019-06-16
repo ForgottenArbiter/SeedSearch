@@ -1,6 +1,7 @@
 package seedsearch.patches;
 
-import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
+import com.evacipated.cardcrawl.modthespire.lib.*;
+import com.evacipated.cardcrawl.modthespire.patcher.PatchingException;
 import com.megacrit.cardcrawl.audio.MusicMaster;
 import com.megacrit.cardcrawl.audio.SoundMaster;
 import com.megacrit.cardcrawl.cards.AbstractCard;
@@ -22,6 +23,13 @@ import com.megacrit.cardcrawl.screens.SingleCardViewPopup;
 import com.megacrit.cardcrawl.screens.SingleRelicViewPopup;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
+import com.megacrit.cardcrawl.vfx.campfire.CampfireLiftEffect;
+import javassist.CannotCompileException;
+import javassist.CtBehavior;
+import javassist.expr.ExprEditor;
+import javassist.expr.FieldAccess;
+import javassist.expr.MethodCall;
+import javassist.expr.NewExpr;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import seedsearch.SearchSettings;
@@ -39,44 +47,15 @@ import static org.apache.logging.log4j.Level.OFF;
 )
 public class StartSearch {
 
-    public static void Replace(CardCrawlGame _instance) {
-
-        CardCrawlGame.publisherIntegration = new SteamIntegration();
-
-        CardCrawlGame.saveSlotPref = SaveHelper.getPrefs("STSSaveSlots");
-        CardCrawlGame.saveSlot = CardCrawlGame.saveSlotPref.getInteger("DEFAULT_SLOT", 0);
-        CardCrawlGame.playerPref = SaveHelper.getPrefs("STSPlayer");
-        CardCrawlGame.playerName = CardCrawlGame.saveSlotPref.getString(SaveHelper.slotName("PROFILE_NAME", CardCrawlGame.saveSlot), "");
-        if (CardCrawlGame.playerName.equals("")) {
-            CardCrawlGame.playerName = CardCrawlGame.playerPref.getString("name", "");
-        }
-        CardCrawlGame.alias = CardCrawlGame.playerPref.getString("alias", "");
-        Settings.initialize(false);
+    public static void Prefix(CardCrawlGame _instance) {
         Settings.displayOptions = new ArrayList<>();
         Settings.displayOptions.add(new DisplayOption(0,0));
-        CardCrawlGame.languagePack = new LocalizedStrings();
-        CardCrawlGame.cardPopup = new SingleCardViewPopup();
-        CardCrawlGame.relicPopup = new SingleRelicViewPopup();
+    }
 
-        CardCrawlGame.music = new MusicMaster();
-        CardCrawlGame.sound = new SoundMaster();
-
-        AbstractCreature.initialize();
-        AbstractCard.initialize();
-        GameDictionary.initialize();
-        ImageMaster.initialize();
-        AbstractPower.initialize();
-        FontHelper.initialize();
-        AbstractCard.initializeDynamicFrameWidths();
-        UnlockTracker.initialize();
-        CardLibrary.initialize();
-        RelicLibrary.initialize();
-        InputHelper.initialize();
-        TipTracker.initialize();
-        ModHelper.initialize();
-        ShaderHelper.initializeShaders();
-        UnlockTracker.retroactiveUnlock();
-
+    @SpireInsertPatch(
+            locator = Locator.class
+    )
+    public static SpireReturn Insert(CardCrawlGame _instance) {
         Class[] noLoggingClasses = {
                 AbstractDungeon.class,
                 AbstractPlayer.class,
@@ -96,15 +75,34 @@ public class StartSearch {
         }
 
         LoadImagePatch.defaultTexture = ImageMaster.loadImage("images/npcs/rug/eng.png");
+        SeedSearch.loadingEnabled = false;
+
         SeedSearch.settings = SearchSettings.loadSettings();
         SeedSearch.runner = new SeedRunner(SeedSearch.settings);
-        SeedSearch.loadingEnabled = false;
         SeedSearch.search();
         if (SeedSearch.settings.exitAfterSearch) {
             exit(0);
         } else {
             System.out.println("Search complete. Manually close this program when finished.");
         }
+        return SpireReturn.Return(null);
     }
 
+    public static ExprEditor Instrument() {
+        return new ExprEditor() {
+            public void edit(NewExpr m) throws CannotCompileException {
+                if (m.getClassName().equals("com.badlogic.gdx.graphics.g2d.SpriteBatch")
+                        || m.getClassName().equals("com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch")) {
+                    m.replace("{$_ = $0;}");
+                }
+            }
+        };
+    }
+
+    private static class Locator extends SpireInsertLocator {
+        public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
+            Matcher matcher = new Matcher.FieldAccessMatcher(CardCrawlGame.class, "tips");
+            return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<Matcher>(), matcher);
+        }
+    }
 }
