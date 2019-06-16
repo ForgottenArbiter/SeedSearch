@@ -25,13 +25,12 @@ public class SeedSearch {
             if (runner.runSeed(seed)) {
                 foundSeeds.add(seed);
                 if(settings.verbose) {
-                    runner.printSeedStats();
+                    runner.getSeedResult().printSeedStats();
                 }
             }
         }
+        System.out.println(String.format("%d seeds found: ", foundSeeds.size()));
         System.out.println(foundSeeds);
-        System.out.println(foundSeeds.size());
-        System.out.println((System.nanoTime() - time1));
     }
 
 }

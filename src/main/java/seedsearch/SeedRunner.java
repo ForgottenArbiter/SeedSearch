@@ -18,7 +18,6 @@ import com.megacrit.cardcrawl.events.exordium.*;
 import com.megacrit.cardcrawl.events.shrines.*;
 import com.megacrit.cardcrawl.helpers.EventHelper;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
-import com.megacrit.cardcrawl.helpers.SeedHelper;
 import com.megacrit.cardcrawl.map.MapEdge;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.random.Random;
@@ -32,6 +31,7 @@ import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.shop.StoreRelic;
 import seedsearch.patches.EventHelperPatch;
+import seedsearch.patches.SeedResult;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -39,6 +39,8 @@ import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import static com.megacrit.cardcrawl.helpers.MonsterHelper.*;
 
 
 public class SeedRunner {
@@ -52,15 +54,7 @@ public class SeedRunner {
     private int actFloor;
     private int bootsCharges = 0;
 
-    private ArrayList<Reward> rewards;
-    private ArrayList<Reward> shopRewards;
-    private ArrayList<String> events;
-    private ArrayList<String> bosses;
-    private ArrayList<String> monsters;
-    private ArrayList<String> mapPath;
-    private ArrayList<String> bossRelics;
-    private int numElites;
-    private int numCombats;
+    private SeedResult seedResult;
 
     private SearchSettings settings;
     private long currentSeed;
@@ -84,15 +78,7 @@ public class SeedRunner {
 
         currentAct = 0;
         actFloor = 0;
-        rewards = new ArrayList<>();
-        events = new ArrayList<>();
-        bosses = new ArrayList<>();
-        monsters = new ArrayList<>();
-        mapPath = new ArrayList<>();
-        shopRewards = new ArrayList<>();
-        bossRelics = new ArrayList<>();
-        numElites = 0;
-        numCombats = 0;
+        seedResult = new SeedResult(currentSeed);
     }
 
     private void resetCharacter() {
@@ -112,44 +98,42 @@ public class SeedRunner {
             CardCrawlGame.playtime = 0F;
         }
 
-        AbstractDungeon exordium = new Exordium(player, new ArrayList<String>());
+        AbstractDungeon exordium = new Exordium(player, new ArrayList<>());
         ArrayList<MapRoomNode> exordiumPath = findMapPath(AbstractDungeon.map);
         tradeStarterRelic();
-        runPath(exordium, exordiumPath);
+        runPath(exordiumPath);
         getBossRewards();
 
-        if (!testAct1Filters()) {
+        if (!seedResult.testAct1Filters(settings)) {
             return false;
         }
 
         currentAct += 1;
-        actFloor = 0;
         AbstractDungeon city = new TheCity(player, AbstractDungeon.specialOneTimeEventList);
         ArrayList<MapRoomNode> cityPath = findMapPath(AbstractDungeon.map);
-        runPath(city, cityPath);
+        runPath(cityPath);
         getBossRewards();
 
 
         currentAct += 1;
-        actFloor = 0;
         AbstractDungeon beyond = new TheBeyond(player, AbstractDungeon.specialOneTimeEventList);
         ArrayList<MapRoomNode> beyondPath = findMapPath(AbstractDungeon.map);
-        runPath(beyond, beyondPath);
+        runPath(beyondPath);
         getBossRewards();
 
         if (settings.act4) {
             currentAct += 1;
-            actFloor = 0;
             AbstractDungeon end = new TheEnding(player, AbstractDungeon.specialOneTimeEventList);
+            AbstractDungeon.floorNum += 1;
             ArrayList<MapRoomNode> endPath = new ArrayList<>();
             endPath.add(AbstractDungeon.map.get(0).get(3));
             endPath.add(AbstractDungeon.map.get(1).get(3));
             endPath.add(AbstractDungeon.map.get(2).get(3));
-            runPath(end, endPath);
+            runPath(endPath);
             getBossRewards();
         }
 
-        return testFinalFilters();
+        return seedResult.testFinalFilters(settings);
     }
 
     public boolean runSeed(long seed) {
@@ -157,67 +141,11 @@ public class SeedRunner {
         return runSeed();
     }
 
-    private boolean testFinalFilters() {
-        if(numCombats > settings.maximumCombats) {
-            return false;
-        }
-        if(numCombats < settings.minimumCombats) {
-            return false;
-        }
-        if(numElites > settings.maximumElites) {
-            return false;
-        }
-        if(numElites < settings.minimumElites) {
-            return false;
-        }
-        if (!events.containsAll(settings.requiredEvents)) {
-            return false;
-        }
-        ArrayList<String> relicStrings = getAllRelicIds();
-        if (!relicStrings.containsAll(settings.requiredRelics)) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean testAct1Filters() {
-        ArrayList<String> relicStrings = getAllRelicIds();
-        if (!relicStrings.containsAll(settings.requiredAct1Relics)) {
-            return false;
-        }
-        ArrayList<String> allCards = getAllCardIds();
-        if (!allCards.containsAll(settings.requiredAct1Cards)) {
-            return false;
-        }
-        return true;
-    }
-
-    private ArrayList<String> getAllRelicIds() {
-        ArrayList<String> relicStrings = new ArrayList<>();
-        for (AbstractRelic relic : player.relics) {
-            relicStrings.add(relic.relicId);
-        }
-        return relicStrings;
-    }
-
-    private ArrayList<String> getAllCardIds() {
-        ArrayList<String> allCards = new ArrayList<>();
-        for (Reward reward : rewards) {
-            for (AbstractCard card : reward.cards) {
-                allCards.add(card.cardID);
-            }
-        }
-        for (AbstractCard card : player.masterDeck.group) {
-            allCards.add(card.cardID);
-        }
-        return allCards;
-    }
-
     private void tradeStarterRelic() {
         String bossRelic = AbstractDungeon.returnEndRandomRelicKey(AbstractRelic.RelicTier.BOSS);
         Reward neowRewards = new Reward(0);
         awardRelic(bossRelic, neowRewards);
-        rewards.add(neowRewards);
+        seedResult.addMiscReward(neowRewards);
     }
 
     private void awardRelic(String relic, Reward reward) {
@@ -235,6 +163,7 @@ public class SeedRunner {
     private void doRelicPickupLogic(AbstractRelic relic, Reward reward) {
         this.player.relics.add(relic);
         String relicKey = relic.relicId;
+        seedResult.addRelic(relicKey);
         switch(relicKey) {
             case TinyHouse.ID:
                 //TODO: Handle Tiny House
@@ -245,8 +174,7 @@ public class SeedRunner {
             case CallingBell.ID:
                 for(int i = 0; i < 3; i++) {
                     AbstractCard newCard = AbstractDungeon.getCard(AbstractCard.CardRarity.CURSE);
-                    reward.addCard(newCard);
-                    player.masterDeck.addToBottom(newCard);
+                    addInvoluntaryCardReward(newCard, reward);
                 }
                 String relic1 = AbstractDungeon.returnRandomRelicKey(AbstractRelic.RelicTier.COMMON);
                 String relic2 = AbstractDungeon.returnRandomRelicKey(AbstractRelic.RelicTier.UNCOMMON);
@@ -265,14 +193,12 @@ public class SeedRunner {
                 }
                 for(int i = 0; i < count; i++) {
                     AbstractCard newCard = AbstractDungeon.returnTrulyRandomCard().makeCopy();
-                    reward.addCard(newCard);
-                    player.masterDeck.addToBottom(newCard);
+                    addInvoluntaryCardReward(newCard, reward);
                 }
                 break;
             case Necronomicon.ID:
                 AbstractCard curse = new Necronomicurse();
-                reward.addCard(curse);
-                player.masterDeck.addToBottom(curse);
+                addInvoluntaryCardReward(curse, reward);
                 break;
         }
     }
@@ -296,7 +222,7 @@ public class SeedRunner {
         for(int floor = 0; floor < 14; floor++) {
             ArrayList<ArrayList<MapRoomNode>> floorParents = new ArrayList<>(4);
             for(int i = 0; i < 4; i++) {
-                ArrayList<MapRoomNode> floorSubList = new ArrayList<MapRoomNode>(7);
+                ArrayList<MapRoomNode> floorSubList = new ArrayList<>(7);
                 for(int j = 0; j < 7; j++) {
                     floorSubList.add(null);
                 }
@@ -354,7 +280,7 @@ public class SeedRunner {
             best_uses = 3;
         }
         int cur_uses = best_uses;
-        ArrayList<MapRoomNode> path = new ArrayList<MapRoomNode>(15);
+        ArrayList<MapRoomNode> path = new ArrayList<>(15);
         int next_x = best_top[cur_uses];
         path.add(map.get(14).get(best_top[cur_uses]));
         for(int y = 14; y > 0; y--) {
@@ -396,7 +322,7 @@ public class SeedRunner {
             }
         }
         for(int floor = 0; floor < 14; floor++) {
-            ArrayList<MapRoomNode> floorParents = new ArrayList<MapRoomNode>(7);
+            ArrayList<MapRoomNode> floorParents = new ArrayList<>(7);
             for(int i = 0; i < 7; i++) {
                 floorParents.add(null);
             }
@@ -458,31 +384,30 @@ public class SeedRunner {
         EVENT, ELITE, MONSTER, SHOP, TREASURE, REST
     }
 
-    private void runPath(AbstractDungeon dungeon, ArrayList<MapRoomNode> path) {
-        int offset = currentAct * 17;
-        for(actFloor = 1; actFloor < path.size(); actFloor++) {
+    private void runPath(ArrayList<MapRoomNode> path) {
+        for(actFloor = 0; actFloor < path.size(); actFloor++) {
             AbstractDungeon.floorNum += 1;
             AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
-            MapRoomNode node = path.get(actFloor - 1);
+            MapRoomNode node = path.get(actFloor);
             RoomType result;
             if(node.room instanceof EventRoom) {
                 result = RoomType.EVENT;
-                mapPath.add("?");
+                seedResult.addToMapPath("?");
             } else if(node.room instanceof MonsterRoomElite) {
                 result = RoomType.ELITE;
-                mapPath.add("E");
+                seedResult.addToMapPath("E");
             } else if(node.room instanceof MonsterRoom) {
                 result = RoomType.MONSTER;
-                mapPath.add("M");
+                seedResult.addToMapPath("M");
             } else if(node.room instanceof ShopRoom) {
                 result = RoomType.SHOP;
-                mapPath.add("S");
+                seedResult.addToMapPath("S");
             } else if(node.room instanceof TreasureRoom) {
                 result = RoomType.TREASURE;
-                mapPath.add("T");
+                seedResult.addToMapPath("T");
             } else {
                 result = RoomType.REST;
-                mapPath.add("R");
+                seedResult.addToMapPath("R");
             }
             if(result == RoomType.EVENT) {
                 EventHelper.RoomResult eventRoll = EventHelper.roll();
@@ -508,23 +433,21 @@ public class SeedRunner {
                     AbstractEvent event = AbstractDungeon.generateEvent(eventRngDuplicate);
                     String eventKey = EventHelperPatch.eventName;
                     Reward eventReward = getEventReward(event, eventKey, AbstractDungeon.floorNum);
-                    events.add(eventKey);
+                    seedResult.registerEvent(eventKey);
                     if (!eventReward.isEmpty()) {
-                        rewards.add(eventReward);
+                        seedResult.addMiscReward(eventReward);
                     }
                     break;
                 case MONSTER:
                     String monster = AbstractDungeon.monsterList.remove(0);
-                    monsters.add(monster);
-                    rewards.add(Reward.makeCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards()));
+                    seedResult.registerCombat(monster);
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                     int gold = AbstractDungeon.treasureRng.random(10, 20);
                     addGoldReward(gold);
-                    numCombats += 1;
                     break;
                 case ELITE:
-                    numElites += 1;
                     String elite= AbstractDungeon.eliteMonsterList.remove(0);
-                    monsters.add(elite);
+                    seedResult.registerEliteCombat(elite);
                     AbstractRelic.RelicTier tier = AbstractDungeon.returnRandomRelicTier();
                     String relic = AbstractDungeon.returnRandomRelicKey(tier);
                     Reward relicReward = new Reward(AbstractDungeon.floorNum);
@@ -533,16 +456,15 @@ public class SeedRunner {
                         AbstractRelic starRelic = AbstractDungeon.returnRandomNonCampfireRelic(tier);
                         awardRelic(starRelic, relicReward);
                     }
-                    rewards.add(relicReward);
-                    rewards.add(Reward.makeCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards()));
+                    seedResult.addMiscReward(relicReward);
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                     gold = AbstractDungeon.treasureRng.random(25, 35);
                     addGoldReward(gold);
-                    numCombats += 1;
                     break;
                 case SHOP:
                     Merchant merchant = new Merchant();
                     Reward shopReward = getShopReward(AbstractDungeon.floorNum);
-                    shopRewards.add(shopReward);
+                    seedResult.addShopReward(shopReward);
                     break;
                 case TREASURE:
                     AbstractChest chest = AbstractDungeon.getRandomChest();
@@ -552,8 +474,8 @@ public class SeedRunner {
                     for(AbstractRelic treasureRelic : combatRelics) {
                         awardRelic(treasureRelic, treasureRelicReward);
                     }
-                    rewards.addAll(combatCardRewards);
-                    rewards.add(treasureRelicReward);
+                    seedResult.addAllCardRewards(combatCardRewards);
+                    seedResult.addMiscReward(treasureRelicReward);
                     break;
                 case REST:
                     if (settings.useShovel && player.hasRelic(Shovel.ID)) {
@@ -564,10 +486,11 @@ public class SeedRunner {
                     break;
             }
         }
-        mapPath.add("R");
-        mapPath.add("BOSS");
+        seedResult.addToMapPath("BOSS");
     }
 
+
+    @SuppressWarnings("unchecked")
     private Reward getShopReward(int floor) {
         Reward shopReward = new Reward(floor);
         ShopScreen screen = AbstractDungeon.shopScreen;
@@ -624,20 +547,20 @@ public class SeedRunner {
                 if(settings.takeSerpentGold) {
                     int goldgain = AbstractDungeon.ascensionLevel >=15 ? 150 : 175;
                     addGoldReward(goldgain);
-                    player.masterDeck.addToBottom(new Doubt());
+                    addInvoluntaryCardReward(new Doubt(), reward);
                 }
                 break;
             case AccursedBlacksmith.ID:
                 if(settings.takeWarpedTongs) {
                     reward.addRelic(WarpedTongs.ID);
-                    player.masterDeck.addToBottom(new Pain());
+                    addInvoluntaryCardReward(new Pain(), reward);
                 }
                 break;
             case BigFish.ID:
                 if (settings.takeBigFishRelic) {
                     AbstractRelic.RelicTier fishTier = AbstractDungeon.returnRandomRelicTier();
                     awardRelic(AbstractDungeon.returnRandomScreenlessRelic(fishTier), reward);
-                    player.masterDeck.addToBottom(new Regret());
+                    addInvoluntaryCardReward(new Regret(), reward);
                 }
                 break;
             case DeadAdventurer.ID:
@@ -653,8 +576,8 @@ public class SeedRunner {
                         for(int i = 1; i <= 3; i++) {
                             if (miscRng.random(0, 99) < encounterChance) {
                                 addGoldReward(miscRng.random(25, 35));
-                                reward.addCards(AbstractDungeon.getRewardCards());
-                                monsters.add(monster);
+                                seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
+                                seedResult.registerCombat(monster);
                             } else {
                                 encounterChance += 25;
                             }
@@ -673,7 +596,7 @@ public class SeedRunner {
                     AbstractRelic.RelicTier mausoleumTier = AbstractDungeon.returnRandomRelicTier();
                     awardRelic(AbstractDungeon.returnRandomScreenlessRelic(mausoleumTier), reward);
                     if (miscRng.randomBoolean() || AbstractDungeon.ascensionLevel >= 15) {
-                        player.masterDeck.addToBottom(new Writhe());
+                        addInvoluntaryCardReward(new Writhe(), reward);
                     }
                 }
                 break;
@@ -692,10 +615,10 @@ public class SeedRunner {
             case MysteriousSphere.ID:
                 if (settings.takeMysteriousSphereFight) {
                     addGoldReward(miscRng.random(45, 55));
-                    monsters.add("2 Orb Walkers");
+                    seedResult.registerCombat("2 Orb Walkers");
                     AbstractRelic.RelicTier mysteriousSphereTier = AbstractRelic.RelicTier.RARE;
                     awardRelic(AbstractDungeon.returnRandomScreenlessRelic(mysteriousSphereTier), reward);
-                    reward.addCards(AbstractDungeon.getRewardCards());
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                 }
                 break;
             case TombRedMask.ID:
@@ -708,20 +631,20 @@ public class SeedRunner {
                 break;
             case Mushrooms.ID:
                 if(settings.takeMushroomFight) {
-                    monsters.add("The Mushroom Lair");
+                    seedResult.registerCombat(MUSHROOMS_EVENT_ENC);
                     addGoldReward(miscRng.random(25, 35));
                     awardRelic(OddMushroom.ID, reward);
-                    reward.addCards(AbstractDungeon.getRewardCards());
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                 } else {
-                    player.masterDeck.addToBottom(new Parasite());
+                    addInvoluntaryCardReward(new Parasite(), reward);
                 }
                 break;
             case MaskedBandits.ID:
                 if (settings.takeMaskedBanditFight) {
-                    monsters.add("Masked Bandits");
+                    seedResult.registerCombat(MASKED_BANDITS_ENC);
                     addGoldReward(miscRng.random(25, 35));
                     awardRelic(RedMask.ID, reward);
-                    reward.addCards(AbstractDungeon.getRewardCards());
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                 } else {
                     addGoldReward(-player.gold);
                 }
@@ -729,7 +652,7 @@ public class SeedRunner {
             case GoldenIdol.ID:
                 if (settings.takeGoldenIdolWithCurse) {
                     awardRelic(GoldenIdol.ID, reward);
-                    player.masterDeck.addToBottom(new Injury());
+                    addInvoluntaryCardReward(new Injury(), reward);
                 } else if (settings.takeGoldenIdolWithoutCurse) {
                     awardRelic(GoldenIdol.ID, reward);
                 }
@@ -766,7 +689,7 @@ public class SeedRunner {
                     try {
                         Method hotkeyCheck = FaceTrader.class.getDeclaredMethod("getRandomFace");
                         hotkeyCheck.setAccessible(true);
-                        AbstractRelic mask = (AbstractRelic) hotkeyCheck.invoke((FaceTrader) event);
+                        AbstractRelic mask = (AbstractRelic) hotkeyCheck.invoke(event);
                         awardRelic(mask, reward);
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
@@ -776,19 +699,19 @@ public class SeedRunner {
             case MindBloom.ID:
                 if (settings.takeMindBloomGold && AbstractDungeon.floorNum <= 40) {
                     addGoldReward(999);
-                    player.masterDeck.addToBottom(new Normality());
-                    player.masterDeck.addToBottom(new Normality());
+                    addInvoluntaryCardReward(new Normality(), reward);
+                    addInvoluntaryCardReward(new Normality(), reward);
                 } else if (settings.takeMindBloomFight) {
                     addGoldReward(100);
                     ArrayList<String> encounters = new ArrayList<>();
-                    encounters.add("The Guardian");
-                    encounters.add("Hexaghost");
-                    encounters.add("Slime Boss");
+                    encounters.add(GUARDIAN_ENC);
+                    encounters.add(HEXAGHOST_ENC);
+                    encounters.add(SLIME_BOSS_ENC);
                     Collections.shuffle(encounters, new java.util.Random(miscRng.randomLong()));
-                    monsters.add(encounters.get(0));
+                    seedResult.registerCombat(encounters.get(0));
                     AbstractRelic bloomRelic = AbstractDungeon.returnRandomRelic(AbstractRelic.RelicTier.RARE);
                     awardRelic(bloomRelic, reward);
-                    reward.addCards(AbstractDungeon.getRewardCards());
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                 } else if (settings.takeMindBloomUpgrade) {
                     awardRelic(MarkOfTheBloom.ID, reward);
                 } // Not really worrying about the other case
@@ -805,16 +728,16 @@ public class SeedRunner {
                 }
                 break;
             case Colosseum.ID:
-                monsters.add("Colosseum Slavers");
+                seedResult.registerCombat(COLOSSEUM_SLAVER_ENC);
                 AbstractDungeon.treasureRng.random(10, 20); //Unused rng roll
                 if (settings.takeColosseumFight) {
-                    monsters.add("Colosseum Nobs");
+                    seedResult.registerCombat(COLOSSEUM_NOB_ENC);
                     AbstractRelic rareRelic = AbstractDungeon.returnRandomRelic(AbstractRelic.RelicTier.RARE);
                     AbstractRelic uncommonRelic = AbstractDungeon.returnRandomRelic(AbstractRelic.RelicTier.UNCOMMON);
                     awardRelic(rareRelic, reward);
                     awardRelic(uncommonRelic, reward);
                     addGoldReward(100);
-                    reward.addCards(AbstractDungeon.getRewardCards());
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                 }
                 break;
             case TheLibrary.ID:
@@ -846,7 +769,7 @@ public class SeedRunner {
                 break;
             case SensoryStone.ID:
                 for (int i = 0; i < settings.numSensoryStoneCards; i++) {
-                    reward.addCards(AbstractDungeon.getColorlessRewardCards());
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getColorlessRewardCards());
                 }
                 break;
             case WeMeetAgain.ID:
@@ -857,11 +780,10 @@ public class SeedRunner {
                 break;
             case WindingHalls.ID:
                 if (settings.takeWindingHallsCurse) {
-                    player.masterDeck.addToBottom(new Writhe());
+                    addInvoluntaryCardReward(new Writhe(), reward);
                 } else if (settings.takeWindingHallsMadness) {
                     for(int i = 0; i < 2; i++) {
-                        reward.addCard(new Madness());
-                        player.masterDeck.addToBottom(new Madness());
+                        addInvoluntaryCardReward(new Madness(), reward);
                     }
                 }
                 break;
@@ -899,16 +821,18 @@ public class SeedRunner {
         return reward;
     }
 
-    public void getBossRewards() {
-        bosses.add(AbstractDungeon.bossKey);
+    private void getBossRewards() {
+        seedResult.registerBossCombat(AbstractDungeon.bossKey);
+        AbstractDungeon.floorNum += 1;
+        AbstractDungeon.currMapNode = new MapRoomNode(-1, 15);
+        AbstractDungeon.currMapNode.room = new MonsterRoomBoss();
         if (AbstractDungeon.ascensionLevel == 20 && currentAct == 2) {
-            bosses.add(AbstractDungeon.bossList.get(1));
+            seedResult.registerBossCombat(AbstractDungeon.bossList.get(1));
+            AbstractDungeon.floorNum += 1;
         }
         if (currentAct < 2) {
-            AbstractDungeon.floorNum = currentAct * 17 + 16;
-            AbstractDungeon.currMapNode = new MapRoomNode(-1, 15);
-            AbstractDungeon.currMapNode.room = new MonsterRoomBoss();
             AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
+
             Reward cardReward = new Reward(AbstractDungeon.floorNum);
             cardReward.addCards(AbstractDungeon.getRewardCards());
             addGoldReward(AbstractDungeon.miscRng.random(-5, 5));
@@ -916,20 +840,23 @@ public class SeedRunner {
             AbstractDungeon.currMapNode.room = new TreasureRoomBoss();
             AbstractDungeon.floorNum += 1;
             AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
+
             BossChest bossChest = new BossChest();
-            Reward bossRelicReward = new Reward(AbstractDungeon.floorNum);
+            ArrayList<String> bossRelicStrings = new ArrayList<>();
             for (AbstractRelic relic : bossChest.relics) {
-                bossRelics.add(relic.relicId);
+                bossRelicStrings.add(relic.relicId);
             }
+            seedResult.addBossReward(bossRelicStrings);
+            Reward bossRelicReward = new Reward(AbstractDungeon.floorNum);
             for (String relic : settings.bossRelicsToTake) {
-                if (bossRelicReward.relics.contains(relic)) {
+                if (bossRelicStrings.contains(relic)) {
                     doRelicPickupLogic(RelicLibrary.getRelic(relic), bossRelicReward);
+                    break;
                 }
             }
 
-            rewards.add(cardReward);
-            rewards.add(bossRelicReward);
-
+            seedResult.addCardReward(cardReward);
+            seedResult.addMiscReward(bossRelicReward);
         }
     }
 
@@ -941,37 +868,13 @@ public class SeedRunner {
         }
     }
 
-    public void printSeedStats() {
-        ArrayList<String> shopRelics = new ArrayList<>();
-        for (Reward shopReward : shopRewards) {
-            shopRelics.addAll(shopReward.relics);
-        }
-
-        System.out.println(MessageFormat.format("Seed: {0} ({1})", SeedHelper.getString(currentSeed), currentSeed));
-        System.out.println(MessageFormat.format("{0} combats", numCombats));
-        System.out.println(MessageFormat.format("{0} Elites", numElites));
-        System.out.println(MessageFormat.format("{0} relics:", player.relics.size()));
-        System.out.println(player.relics);
-        System.out.println("Shop relics:");
-        System.out.println(shopRelics);
-        System.out.println("Boss relics:");
-        System.out.println(bossRelics);
-        System.out.println("Events:");
-        System.out.println(events);
-        System.out.println("Monsters (not boss):");
-        System.out.println(monsters);
-        System.out.println("Bosses:");
-        System.out.println(bosses);
-        System.out.println("Map path:");
-        System.out.println(mapPath);
-        System.out.println("Card choices:");
-        for (Reward reward : rewards) {
-            if (reward.cards.size() > 0) {
-                System.out.println(String.format("Floor %d: %s", reward.floor, reward.cards));
-            }
-        }
-        System.out.println("Mandatory cards:");
-        System.out.println(player.masterDeck.group);
-        System.out.println("#####################################");
+    public SeedResult getSeedResult() {
+        return seedResult;
     }
+
+    private void addInvoluntaryCardReward(AbstractCard card, Reward reward) {
+        reward.cards.add(card);
+        AbstractDungeon.player.masterDeck.addToBottom(card);
+    }
+
 }
