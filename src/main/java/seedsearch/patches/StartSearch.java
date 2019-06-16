@@ -100,7 +100,11 @@ public class StartSearch {
         SeedSearch.runner = new SeedRunner(SeedSearch.settings);
         SeedSearch.loadingEnabled = false;
         SeedSearch.search();
-        exit(0);
+        if (SeedSearch.settings.exitAfterSearch) {
+            exit(0);
+        } else {
+            System.out.println("Search complete. Manually close this program when finished.");
+        }
     }
 
 }

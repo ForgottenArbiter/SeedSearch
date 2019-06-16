@@ -24,6 +24,7 @@ public class SearchSettings {
     public long startSeed = 0L;
     public long endSeed = 100L;
     public boolean verbose = true;
+    public boolean exitAfterSearch = false;
 
     // Navigation
 

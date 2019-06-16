@@ -8,9 +8,9 @@ A mod that searches through Slay the Spire seeds.
 
 Note: Use of other mods, including BaseMod, with SeedSearch is not recommended.
 
-## Setup
+## Setup and Usage
 
-Run the mod once to search the first 100 seeds with some default settings. On the current patch of the game, you should find 3 seeds (1, 26, and 30). A file called "spireConfig.json" should have been created. Edit that file to control the behavior of the search.
+Run the mod once to search the first 100 seeds with some default settings. On the current patch of the game, you should find 3 seeds (1, 26, and 30). A file called "spireConfig.json" should have been created. Edit that file to control the behavior of future searches. Note that the game will not launch. All output will be printed to the program's stdout.
 
 To see some comments about the settings, see the corresponding sorce file: https://github.com/ForgottenArbiter/SeedSearch/blob/master/src/main/java/seedsearch/SearchSettings.java
 
@@ -24,3 +24,5 @@ When searching through seeds, many assumptions must be made about your choices a
 - Default seed filtering is very limited. To do something complicated, you must program it yourself.
 - Neow options are not implemented. Right now, the tool assumes a starter relic trade.
 - There is no checking to make sure that you can actually make it to Act 4.
+
+## 
