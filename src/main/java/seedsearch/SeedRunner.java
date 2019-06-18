@@ -81,6 +81,14 @@ public class SeedRunner {
 
     private void resetCharacter() {
         player.relics = new ArrayList<>();
+        try {
+            Method starterRelicsMethod = AbstractPlayer.class.getDeclaredMethod("initializeStarterRelics", AbstractPlayer.PlayerClass.class);
+            starterRelicsMethod.setAccessible(true);
+            starterRelicsMethod.invoke(player, settings.playerClass);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Reflection error when initializing player relics");
+        }
         player.potions = new ArrayList<>();
         player.masterDeck = new CardGroup(CardGroup.CardGroupType.MASTER_DECK);
         CharSelectInfo info = player.getLoadout();
@@ -102,6 +110,7 @@ public class SeedRunner {
         runPath(exordiumPath);
         getBossRewards();
 
+        seedResult.updateRelics();
         if (!seedResult.testAct1Filters(settings)) {
             return false;
         }
@@ -131,6 +140,7 @@ public class SeedRunner {
             getBossRewards();
         }
 
+        seedResult.updateRelics();
         return seedResult.testFinalFilters(settings);
     }
 
@@ -142,6 +152,7 @@ public class SeedRunner {
     private void tradeStarterRelic() {
         String bossRelic = AbstractDungeon.returnEndRandomRelicKey(AbstractRelic.RelicTier.BOSS);
         Reward neowRewards = new Reward(0);
+        loseRelic(player.relics.get(0).relicId);
         awardRelic(bossRelic, neowRewards);
         seedResult.addMiscReward(neowRewards);
     }
@@ -161,7 +172,6 @@ public class SeedRunner {
     private void doRelicPickupLogic(AbstractRelic relic, Reward reward) {
         this.player.relics.add(relic);
         String relicKey = relic.relicId;
-        seedResult.addRelic(relicKey);
         switch(relicKey) {
             case TinyHouse.ID:
                 //TODO: Handle Tiny House
@@ -202,6 +212,8 @@ public class SeedRunner {
     }
 
     private ArrayList<MapRoomNode> findBootsPath(ArrayList<ArrayList<MapRoomNode>> map) {
+        // I apologize for this monstrosity
+
         float[][] weights = new float[15][7];
         float[][][] pathWeights = new float[15][7][4];
         ArrayList<ArrayList<ArrayList<MapRoomNode>>> parents = new ArrayList<>();
@@ -658,7 +670,7 @@ public class SeedRunner {
             case ForgottenAltar.ID:
                 if(player.hasRelic(GoldenIdol.ID) && settings.tradeGoldenIdolForBloody) {
                     awardRelic(BloodyIdol.ID, reward);
-                    player.loseRelic(GoldenIdol.ID);
+                    loseRelic(GoldenIdol.ID);
                 }
                 break;
             case Bonfire.ID:
@@ -721,7 +733,7 @@ public class SeedRunner {
                 break;
             case MoaiHead.ID:
                 if (settings.tradeGoldenIdolForMoney && player.hasRelic(GoldenIdol.ID)) {
-                    player.loseRelic(GoldenIdol.ID);
+                    loseRelic(GoldenIdol.ID);
                     addGoldReward(333);
                 }
                 break;
@@ -873,6 +885,10 @@ public class SeedRunner {
     private void addInvoluntaryCardReward(AbstractCard card, Reward reward) {
         reward.cards.add(card);
         AbstractDungeon.player.masterDeck.addToBottom(card);
+    }
+
+    private void loseRelic(String relicID) {
+        player.loseRelic(relicID);
     }
 
 }

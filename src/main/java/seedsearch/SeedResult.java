@@ -86,12 +86,11 @@ public class SeedResult {
         mapPath.add(mapSymbol);
     }
 
-    public void addRelic(String relic) {
-        relics.add(relic);
-    }
-
-    public void removeRelic(String relic) {
-        relics.remove(relic);
+    public void updateRelics() {
+        relics = new ArrayList<>();
+        for (AbstractRelic relic : AbstractDungeon.player.relics) {
+            relics.add(relic.relicId);
+        }
     }
 
     public boolean testFinalFilters(SearchSettings settings) {
