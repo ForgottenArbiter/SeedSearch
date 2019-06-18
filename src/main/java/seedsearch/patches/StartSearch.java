@@ -2,43 +2,27 @@ package seedsearch.patches;
 
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.evacipated.cardcrawl.modthespire.patcher.PatchingException;
-import com.megacrit.cardcrawl.audio.MusicMaster;
-import com.megacrit.cardcrawl.audio.SoundMaster;
-import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.dungeons.TheEnding;
 import com.megacrit.cardcrawl.helpers.*;
-import com.megacrit.cardcrawl.helpers.input.InputHelper;
-import com.megacrit.cardcrawl.integrations.steam.SteamIntegration;
-import com.megacrit.cardcrawl.localization.LocalizedStrings;
 import com.megacrit.cardcrawl.map.RoomTypeAssigner;
-import com.megacrit.cardcrawl.powers.AbstractPower;
 import com.megacrit.cardcrawl.screens.DisplayOption;
-import com.megacrit.cardcrawl.screens.SingleCardViewPopup;
-import com.megacrit.cardcrawl.screens.SingleRelicViewPopup;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
-import com.megacrit.cardcrawl.vfx.campfire.CampfireLiftEffect;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import javassist.expr.ExprEditor;
-import javassist.expr.FieldAccess;
-import javassist.expr.MethodCall;
 import javassist.expr.NewExpr;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import seedsearch.SearchSettings;
-import seedsearch.SeedRunner;
 import seedsearch.SeedSearch;
 
 import java.util.ArrayList;
 
-import static java.lang.System.exit;
 import static org.apache.logging.log4j.Level.OFF;
 
 @SpirePatch(
@@ -75,16 +59,7 @@ public class StartSearch {
         }
 
         LoadImagePatch.defaultTexture = ImageMaster.loadImage("images/npcs/rug/eng.png");
-        SeedSearch.loadingEnabled = false;
-
-        SeedSearch.settings = SearchSettings.loadSettings();
-        SeedSearch.runner = new SeedRunner(SeedSearch.settings);
         SeedSearch.search();
-        if (SeedSearch.settings.exitAfterSearch) {
-            exit(0);
-        } else {
-            System.out.println("Search complete. Manually close this program when finished.");
-        }
         return SpireReturn.Return(null);
     }
 

@@ -12,7 +12,7 @@ Note: Use of other mods, including BaseMod, with SeedSearch is not recommended.
 
 Run the mod once to search the first 100 seeds with some default settings. On the current patch of the game (v1.0), you should find 3 seeds (1, 26, and 30). A file called "spireConfig.json" should have been created. Edit that file to control the behavior of future searches. Note that the game will not launch. All output will be printed to the program's stdout.
 
-To see some comments about the settings, see the corresponding sorce file: https://github.com/ForgottenArbiter/SeedSearch/blob/master/src/main/java/seedsearch/SearchSettings.java
+To see some comments about the settings, see the corresponding source file: https://github.com/ForgottenArbiter/SeedSearch/blob/master/src/main/java/seedsearch/SearchSettings.java
 
 ## Caveats
 

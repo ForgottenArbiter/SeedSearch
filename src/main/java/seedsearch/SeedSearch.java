@@ -2,14 +2,17 @@ package seedsearch;
 
 import java.util.ArrayList;
 
+import static java.lang.System.exit;
+
 public class SeedSearch {
 
     public static boolean loadingEnabled = true;
-    public static SeedRunner runner;
     public static SearchSettings settings;
 
     public static void search() {
-        long time1 = System.nanoTime();
+        loadingEnabled = false;
+        settings = SearchSettings.loadSettings();
+        SeedRunner runner = new SeedRunner(settings);
         ArrayList<Long> foundSeeds = new ArrayList<>();
         for(long seed = settings.startSeed; seed < settings.endSeed; seed++) {
             if (runner.runSeed(seed)) {
@@ -21,6 +24,12 @@ public class SeedSearch {
         }
         System.out.println(String.format("%d seeds found: ", foundSeeds.size()));
         System.out.println(foundSeeds);
+
+        if (SeedSearch.settings.exitAfterSearch) {
+            exit(0);
+        } else {
+            System.out.println("Search complete. Manually close this program when finished.");
+        }
     }
 
 }
