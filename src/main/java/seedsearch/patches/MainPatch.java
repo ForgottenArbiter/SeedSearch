@@ -14,7 +14,7 @@ import com.megacrit.cardcrawl.desktop.DesktopLauncher;
 import static org.mockito.Mockito.mock;
 
 @SpirePatch(
-        clz= DesktopLauncher.class,
+        clz = DesktopLauncher.class,
         method = "main"
 )
 public class MainPatch {
