@@ -150,9 +150,9 @@ public class SeedRunner {
     }
 
     private void tradeStarterRelic() {
+        loseRelic(player.relics.get(0).relicId);
         String bossRelic = AbstractDungeon.returnEndRandomRelicKey(AbstractRelic.RelicTier.BOSS);
         Reward neowRewards = new Reward(0);
-        loseRelic(player.relics.get(0).relicId);
         awardRelic(bossRelic, neowRewards);
         seedResult.addMiscReward(neowRewards);
     }
