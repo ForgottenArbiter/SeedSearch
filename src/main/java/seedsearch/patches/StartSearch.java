@@ -40,24 +40,6 @@ public class StartSearch {
             locator = Locator.class
     )
     public static SpireReturn Insert(CardCrawlGame _instance) {
-        Class[] noLoggingClasses = {
-                AbstractDungeon.class,
-                AbstractPlayer.class,
-                TheEnding.class,
-                UnlockTracker.class,
-                RoomTypeAssigner.class,
-                CardLibrary.class,
-                EventHelper.class,
-                ShopScreen.class,
-                CardGroup.class,
-                CardHelper.class
-        };
-
-        for (Class c : noLoggingClasses) {
-            Logger logger = LogManager.getLogger(c);
-            ((org.apache.logging.log4j.core.Logger)logger).setLevel(OFF);
-        }
-
         LoadImagePatch.defaultTexture = ImageMaster.loadImage("images/npcs/rug/eng.png");
         SeedSearch.search();
         return SpireReturn.Return(null);
