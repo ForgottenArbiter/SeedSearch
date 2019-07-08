@@ -16,6 +16,11 @@ Run the mod once to search the first 100 seeds with some default settings. On th
 
 These are the descriptions of the settings in spireConfig.json. Edit them as you like to control the outcome of the seed search.
 
+Some settings take lists of relics, cards, or events. For these settings, either use the ID (found in the game's code and output of Seed Search) or the name in the current language. Seed Search will warn you if an invalid name or ID is provided. For example, the following two settings for requiredEvents are both valid:
+
+` "requiredEvents": ["FaceTrader", "Beggar"],`  
+` "requiredEvents": ["Face Trader", "Old Beggar"],`
+
 ### Core search parameters
 
 * **ascensionLevel**: The ascension level used for the search (0 to 20)
@@ -51,7 +56,7 @@ These room weights are used to determine which path is taken through each map. T
 
 All of these control which actions are taken at various events in the game.
 
-* **takeSerpentGold**: Whether to take the gold for the curse in the Ssserpent event.
+* **takeSerpentGold**: Whether to take the gold for the curse in the Sssserpent event.
 * **takeWarpedTongs**: Whether to take the Warped Tongs in the Accursed Blacksmith event.
 * **takeBigFishRelic**: Whether to take the relic for the curse in the Big Fish event.
 * **takeDeadAdventurerFight**: If set to true, always start a combat in the Dead Adventurer event if possible. Otherwise, always skip the event.
