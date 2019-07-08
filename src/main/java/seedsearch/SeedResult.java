@@ -4,8 +4,6 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.SeedHelper;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
-import seedsearch.Reward;
-import seedsearch.SearchSettings;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
