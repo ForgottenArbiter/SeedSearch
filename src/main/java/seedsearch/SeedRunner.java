@@ -95,6 +95,10 @@ public class SeedRunner {
         CharSelectInfo info = player.getLoadout();
         player.maxHealth = info.maxHp;
         player.gold = info.gold;
+
+        // Remove the MockMusic tracks that would otherwise pile up
+        CardCrawlGame.music.dispose();
+        CardCrawlGame.music.update();
     }
 
     private boolean runSeed() {

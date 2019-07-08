@@ -27,7 +27,7 @@ public class MainPatch {
             HeadlessNativesLoader.load();
             Gdx.graphics = new MockGraphics();
             Gdx.gl = Gdx.gl20 = mock(GL20.class);
-            Gdx.audio = new MockAudio();
+            Gdx.audio = null;
             HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
             new HeadlessApplication(new CardCrawlGame(config.preferencesDirectory), config);
         } catch (Exception e) {
