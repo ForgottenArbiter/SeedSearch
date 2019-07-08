@@ -132,4 +132,46 @@ public class SearchSettings {
         }
     }
 
+    public boolean checkIds() {
+        ArrayList<ArrayList<String>> relicLists = new ArrayList<>();
+        relicLists.add(relicsToBuy);
+        relicLists.add(bossRelicsToTake);
+        relicLists.add(requiredAct1Relics);
+        relicLists.add(requiredRelics);
+
+        ArrayList<ArrayList<String>> cardLists = new ArrayList<>();
+        cardLists.add(cardsToBuy);
+        cardLists.add(requiredAct1Cards);
+
+        ArrayList<ArrayList<String>> eventLists = new ArrayList<>();
+        eventLists.add(requiredEvents);
+
+        boolean mistakesMade = false;
+
+        for (ArrayList<String> relicList : relicLists) {
+            ArrayList<String> mistakes = IdChecker.findBadRelicIds(relicList);
+            if (mistakes.size() > 0) {
+                System.out.println(String.format("WARNING: Bad relic ids/names found: %s", mistakes));
+                mistakesMade = true;
+            }
+        }
+
+        for (ArrayList<String> cardList : cardLists) {
+            ArrayList<String> mistakes = IdChecker.findBadCardIds(cardList);
+            if (mistakes.size() > 0) {
+                System.out.println(String.format("WARNING: Bad card ids/names found: %s", mistakes));
+                mistakesMade = true;
+            }
+        }
+
+        for (ArrayList<String> eventList : eventLists) {
+            ArrayList<String> mistakes = IdChecker.findBadEventIds(eventList);
+            if (mistakes.size() > 0) {
+                System.out.println(String.format("WARNING: Bad event ids/names found: %s", mistakes));
+                mistakesMade = true;
+            }
+        }
+
+        return mistakesMade;
+    }
 }

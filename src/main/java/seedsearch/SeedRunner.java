@@ -64,6 +64,7 @@ public class SeedRunner {
         characterManager.setChosenCharacter(settings.playerClass);
         currentSeed = settings.startSeed;
         AbstractDungeon.ascensionLevel = settings.ascensionLevel;
+        this.settings.checkIds();
     }
 
     private void setSeed(long seed) {
