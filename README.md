@@ -10,13 +10,13 @@ Note: Use of other mods, including BaseMod, with SeedSearch is not recommended a
 
 ## Setup and Usage
 
-Run the mod once to search the first 100 seeds with some default settings. On the current patch of the game (v1.1), you should find 3 seeds (1, 26, and 30). A file called "spireConfig.json" should have been created. Edit that file to control the behavior of future searches. Note that the game will not launch. All output will be printed to the program's stdout.
+Run the mod once to search the first 100 seeds with some default settings. On the current patch of the game (v1.1), you should find 3 seeds (1, 26, and 30). A file called "searchConfig.json" should have been created in your current working directory. Edit that file to control the behavior of future searches. Note that the game will not launch. All output will be printed to the program's stdout.
 
 ## Settings
 
-These are the descriptions of the settings in spireConfig.json. Edit them as you like to control the outcome of the seed search.
+These are the descriptions of the settings in searchConfig.json. Edit them as you like to control the outcome of the seed search.
 
-Some settings take lists of relics, cards, or events. For these settings, either use the ID (found in the game's code and output of Seed Search) or the name in the current language. Seed Search will warn you if an invalid name or ID is provided. For example, the following two settings for requiredEvents are both valid:
+Some settings take lists of relics, cards, or events. For these settings, either use the ID (found in the game's code and output of Seed Search) or the name in the game's currently selected language. Seed Search will warn you if an invalid name or ID is provided. For example, the following two settings for requiredEvents are both valid:
 
 ` "requiredEvents": ["FaceTrader", "Beggar"],`  
 ` "requiredEvents": ["Face Trader", "Old Beggar"],`
