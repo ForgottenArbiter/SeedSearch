@@ -6,8 +6,10 @@ import com.megacrit.cardcrawl.events.exordium.*;
 import com.megacrit.cardcrawl.events.shrines.*;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.helpers.EventHelper;
+import com.megacrit.cardcrawl.helpers.MonsterHelper;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
+import seedsearch.patches.MonsterHelperPatch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,6 +74,7 @@ public class IdChecker {
     private static HashMap<String, String> eventMap;
     private static HashMap<String, String> cardMap;
     private static HashMap<String, String> relicMap;
+    private static HashMap<String, String> encounterMap;
 
     static {
         eventMap = new HashMap<>();
@@ -97,6 +100,17 @@ public class IdChecker {
         for (ArrayList<AbstractRelic> relicList : relicLists) {
             for (AbstractRelic relic : relicList) {
                 relicMap.put(relic.name, relic.relicId);
+            }
+        }
+
+        encounterMap = new HashMap<>();
+        MonsterHelper.uploadEnemyData();
+        for (String encounter : MonsterHelperPatch.ids) {
+            String encounterName = MonsterHelper.getEncounterName(encounter);
+            if (!encounterName.equals("")) {
+                encounterMap.put(encounterName, encounter);
+            } else {
+                encounterMap.put(encounter, encounter);
             }
         }
     }
@@ -126,6 +140,10 @@ public class IdChecker {
 
     public static ArrayList<String> findBadRelicIds(ArrayList<String> ids) {
         return findBadIds(relicMap, ids);
+    }
+
+    public static ArrayList<String> findBadEncounterIds(ArrayList<String> ids) {
+        return findBadIds(encounterMap, ids);
     }
 
 }

@@ -84,6 +84,7 @@ public class SearchSettings {
     public ArrayList<String> requiredAct1Relics = new ArrayList<>();
     public ArrayList<String> requiredRelics = new ArrayList<>();
     public ArrayList<String> requiredEvents = new ArrayList<>();
+    public ArrayList<String> requiredCombats = new ArrayList<>();
     public int minimumElites = 0;
     public int maximumElites = 1;
     public int minimumCombats = 0;
@@ -146,6 +147,9 @@ public class SearchSettings {
         ArrayList<ArrayList<String>> eventLists = new ArrayList<>();
         eventLists.add(requiredEvents);
 
+        ArrayList<ArrayList<String>> encounterLists = new ArrayList<>();
+        encounterLists.add(requiredCombats);
+
         boolean mistakesMade = false;
 
         for (ArrayList<String> relicList : relicLists) {
@@ -168,6 +172,14 @@ public class SearchSettings {
             ArrayList<String> mistakes = IdChecker.findBadEventIds(eventList);
             if (mistakes.size() > 0) {
                 System.out.println(String.format("WARNING: Bad event ids/names found: %s", mistakes));
+                mistakesMade = true;
+            }
+        }
+
+        for (ArrayList<String> encounterList : encounterLists) {
+            ArrayList<String> mistakes = IdChecker.findBadEncounterIds(encounterList);
+            if (mistakes.size() > 0) {
+                System.out.println(String.format("WARNING: Bad encounter ids/names found: %s", mistakes));
                 mistakesMade = true;
             }
         }

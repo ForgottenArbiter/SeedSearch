@@ -110,6 +110,9 @@ public class SeedResult {
         if (!relics.containsAll(settings.requiredRelics)) {
             return false;
         }
+        if (!monsters.containsAll(settings.requiredCombats)) {
+            return false;
+        }
         return true;
     }
 

@@ -94,6 +94,7 @@ These options control the criteria for deciding which seeds are selected as vali
 * **requiredAct1Relics**: The relics which must be acquired somewhere in Act 1
 * **requiredRelics**: The relics which must be acquired anywhere in the run
 * **requiredEvents**: The events which must be encountered somewhere in the run
+* **requiredCombats**: The combats which must be encountered somewhere in the run (e.g. "The Champ")
 * **minimumElites**: The minimum number of elites which must be encountered
 * **maximumElites**: The maximum number of elites which may be encountered
 * **minimumCombats**: The minimum number of combats (event combats, normal combats, elites, and bosses)
