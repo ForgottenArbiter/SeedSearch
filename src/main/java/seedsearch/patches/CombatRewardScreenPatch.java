@@ -56,9 +56,7 @@ public class CombatRewardScreenPatch {
     }
 
     public static void extractRewards(CombatRewardScreen _instance) {
-        SeedRunner.combatGold = 0;
-        SeedRunner.combatRelics = new ArrayList<>();
-        SeedRunner.combatCardRewards = new ArrayList<>();
+        SeedRunner.clearCombatRewards();
         _instance.setupItemReward();
         for (RewardItem item : _instance.rewards) {
             if (item.type == RewardItem.RewardType.RELIC) {

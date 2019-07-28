@@ -18,8 +18,11 @@ import com.megacrit.cardcrawl.events.exordium.*;
 import com.megacrit.cardcrawl.events.shrines.*;
 import com.megacrit.cardcrawl.helpers.EventHelper;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
+import com.megacrit.cardcrawl.helpers.TipTracker;
 import com.megacrit.cardcrawl.map.MapEdge;
 import com.megacrit.cardcrawl.map.MapRoomNode;
+import com.megacrit.cardcrawl.neow.NeowEvent;
+import com.megacrit.cardcrawl.neow.NeowReward;
 import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.relics.*;
 import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
@@ -30,7 +33,10 @@ import com.megacrit.cardcrawl.shop.Merchant;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.shop.StoreRelic;
+import seedsearch.patches.AbstractRoomPatch;
+import seedsearch.patches.CardRewardScreenPatch;
 import seedsearch.patches.EventHelperPatch;
+import seedsearch.patches.ShowCardAndObtainEffectPatch;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -64,6 +70,7 @@ public class SeedRunner {
         characterManager.setChosenCharacter(settings.playerClass);
         currentSeed = settings.startSeed;
         AbstractDungeon.ascensionLevel = settings.ascensionLevel;
+        Settings.seedSet = true;
         this.settings.checkIds();
     }
 
@@ -102,7 +109,6 @@ public class SeedRunner {
     }
 
     private boolean runSeed() {
-
         if (!settings.speedrunPace) {
             CardCrawlGame.playtime = 900F;
         } else {
@@ -111,7 +117,14 @@ public class SeedRunner {
 
         AbstractDungeon exordium = new Exordium(player, new ArrayList<>());
         ArrayList<MapRoomNode> exordiumPath = findMapPath(AbstractDungeon.map);
-        tradeStarterRelic();
+
+        ArrayList<NeowReward> neowRewards = getNeowRewards();
+        seedResult.addNeowRewards(neowRewards);
+        if (settings.neowChoice < 0 || settings.neowChoice > 3) {
+            throw new RuntimeException("The 'neowChoice' setting must be between 0 and 3.");
+        }
+        claimNeowReward(neowRewards.get(settings.neowChoice));
+
         runPath(exordiumPath);
         getBossRewards();
 
@@ -125,7 +138,6 @@ public class SeedRunner {
         ArrayList<MapRoomNode> cityPath = findMapPath(AbstractDungeon.map);
         runPath(cityPath);
         getBossRewards();
-
 
         currentAct += 1;
         AbstractDungeon beyond = new TheBeyond(player, AbstractDungeon.specialOneTimeEventList);
@@ -154,12 +166,58 @@ public class SeedRunner {
         return runSeed();
     }
 
-    private void tradeStarterRelic() {
-        loseRelic(player.relics.get(0).relicId);
-        String bossRelic = AbstractDungeon.returnEndRandomRelicKey(AbstractRelic.RelicTier.BOSS);
-        Reward neowRewards = new Reward(0);
-        awardRelic(bossRelic, neowRewards);
-        seedResult.addMiscReward(neowRewards);
+    public static void clearCombatRewards() {
+        combatGold = 0;
+        combatRelics = new ArrayList<>();
+        combatCardRewards = new ArrayList<>();
+    }
+
+    private ArrayList<NeowReward> getNeowRewards() {
+        NeowEvent.rng = new Random(Settings.seed);
+        ArrayList<NeowReward> rewards = new ArrayList<>();
+        rewards.add(new NeowReward(0));
+        rewards.add(new NeowReward(1));
+        rewards.add(new NeowReward(2));
+        rewards.add(new NeowReward(3));
+        return rewards;
+    }
+
+    private void claimNeowReward(NeowReward neowOption) {
+        Reward reward = new Reward(0);
+        AbstractDungeon.getCurrMapNode().room = new EmptyRoom();
+        AbstractRoomPatch.obtainedRelic = null;
+        CardRewardScreenPatch.rewardCards = null;
+        ShowCardAndObtainEffectPatch.resetCards();
+        neowOption.activate();
+        if (AbstractRoomPatch.obtainedRelic != null) {
+            awardRelic(AbstractRoomPatch.obtainedRelic, reward);
+        }
+        if (CardRewardScreenPatch.rewardCards != null) {
+            seedResult.addCardReward(0, CardRewardScreenPatch.rewardCards);
+        }
+        if (ShowCardAndObtainEffectPatch.obtainedCards.size() > 0) {
+            for (AbstractCard card : ShowCardAndObtainEffectPatch.obtainedCards) {
+                addInvoluntaryCardReward(card, reward);
+            }
+        }
+        if (neowOption.type == NeowReward.NeowRewardType.TRANSFORM_CARD) {
+            // We're assuming we remove the first card in the deck here
+            AbstractCard removedCard = player.masterDeck.group.get(0);
+            AbstractDungeon.transformCard(removedCard, false, NeowEvent.rng);
+            player.masterDeck.removeCard(removedCard);
+            addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
+        }
+        if (neowOption.type == NeowReward.NeowRewardType.TRANSFORM_TWO_CARDS) {
+            AbstractCard removedCard = player.masterDeck.group.get(0);
+            AbstractDungeon.transformCard(removedCard, false, NeowEvent.rng);
+            player.masterDeck.removeCard(removedCard);
+            addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
+            removedCard = player.masterDeck.group.get(0);
+            AbstractDungeon.transformCard(removedCard, false, NeowEvent.rng);
+            player.masterDeck.removeCard(removedCard);
+            addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
+        }
+        seedResult.addMiscReward(reward);
     }
 
     private void awardRelic(String relic, Reward reward) {
@@ -552,6 +610,8 @@ public class SeedRunner {
     }
 
     private Reward getEventReward(AbstractEvent event, String eventKey, int floor) {
+        clearCombatRewards();
+        ShowCardAndObtainEffectPatch.resetCards();
         Random miscRng = AbstractDungeon.miscRng;
         Reward reward = new Reward(floor);
         switch(eventKey) {
@@ -832,6 +892,11 @@ public class SeedRunner {
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
+        }
+        if (ShowCardAndObtainEffectPatch.obtainedCards.size() > 0) {
+            for (AbstractCard card : ShowCardAndObtainEffectPatch.obtainedCards) {
+                addInvoluntaryCardReward(card, reward);
+            }
         }
         return reward;
     }

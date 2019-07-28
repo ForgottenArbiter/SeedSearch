@@ -3,6 +3,7 @@ package seedsearch;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.SeedHelper;
+import com.megacrit.cardcrawl.neow.NeowReward;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.text.MessageFormat;
@@ -13,6 +14,7 @@ public class SeedResult {
     private ArrayList<Reward> miscRewards;
     private ArrayList<Reward> shopRewards;
     private ArrayList<Reward> cardRewards;
+    private ArrayList<NeowReward> neowRewards;
     private ArrayList<String> events;
     private ArrayList<String> bosses;
     private ArrayList<String> monsters;
@@ -28,6 +30,7 @@ public class SeedResult {
         this.miscRewards = new ArrayList<>();
         this.shopRewards = new ArrayList<>();
         this.cardRewards = new ArrayList<>();
+        this.neowRewards= new ArrayList<>();
         this.events = new ArrayList<>();
         this.bosses = new ArrayList<>();
         this.monsters = new ArrayList<>();
@@ -55,6 +58,10 @@ public class SeedResult {
 
     public void addShopReward(Reward reward) {
         shopRewards.add(reward);
+    }
+
+    public void addNeowRewards(ArrayList<NeowReward> neowRewards) {
+        this.neowRewards = neowRewards;
     }
 
     public void registerCombat(String monsterName) {
@@ -145,6 +152,11 @@ public class SeedResult {
         return allCards;
     }
 
+    private static String removeTextFormatting(String text) {
+        text = text.replaceAll("~|@(\\S+)~|@", "$1");
+        return text.replaceAll("#.|NL", "");
+    }
+
     public void printSeedStats() {
         ArrayList<String> shopRelics = new ArrayList<>();
         ArrayList<String> shopCards = new ArrayList<>();
@@ -156,6 +168,10 @@ public class SeedResult {
         }
 
         System.out.println(MessageFormat.format("Seed: {0} ({1})", SeedHelper.getString(seed), seed));
+        System.out.println("Neow Options:");
+        for(NeowReward reward : neowRewards) {
+            System.out.println(removeTextFormatting(reward.optionLabel));
+        }
         System.out.println(MessageFormat.format("{0} combats ({1} elite(s)):", numCombats, numElites));
         System.out.println(monsters);
         System.out.println("Bosses:");
