@@ -1,6 +1,7 @@
 package seedsearch.patches;
 
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
+import com.evacipated.cardcrawl.modthespire.lib.SpireReturn;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 
 public class AbstractCardPatch {
@@ -10,8 +11,8 @@ public class AbstractCardPatch {
             method="initializeDescription"
     )
     public static class InitializeDescriptionPatch {
-        public static void Replace(AbstractCard _instance) {
-            //Do nothing
+        public static SpireReturn Prefix(AbstractCard _instance) {
+            return SpireReturn.Return(null);
         }
     }
 

@@ -84,6 +84,7 @@ public class SeedRunner {
 
         currentAct = 0;
         actFloor = 0;
+        this.bootsCharges = 0;
         seedResult = new SeedResult(currentSeed);
     }
 
@@ -487,15 +488,19 @@ public class SeedRunner {
                 switch (eventRoll) {
                     case ELITE:
                         result = RoomType.ELITE;
+                        node.room = new MonsterRoomElite();
                         break;
                     case MONSTER:
                         result = RoomType.MONSTER;
+                        node.room = new MonsterRoom();
                         break;
                     case SHOP:
                         result = RoomType.SHOP;
+                        node.room = new ShopRoom();
                         break;
                     case TREASURE:
                         result = RoomType.TREASURE;
+                        node.room = new TreasureRoom();
                         break;
                 }
             }

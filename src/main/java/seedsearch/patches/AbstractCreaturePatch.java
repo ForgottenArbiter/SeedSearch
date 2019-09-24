@@ -2,6 +2,7 @@ package seedsearch.patches;
 
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.AnimationStateData;
+import com.esotericsoftware.spine.Skeleton;
 import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 
@@ -23,6 +24,9 @@ public class AbstractCreaturePatch {
             Field data = AbstractCreature.class.getDeclaredField("stateData");
             data.setAccessible(true);
             data.set(_instance, mock(AnimationStateData.class));
+            Field skeleton = AbstractCreature.class.getDeclaredField("skeleton");
+            skeleton.setAccessible(true);
+            skeleton.set(_instance, mock(Skeleton.class));
         } catch (IllegalAccessException | NoSuchFieldException e) {
             e.printStackTrace();
         }
