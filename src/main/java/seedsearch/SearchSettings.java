@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.megacrit.cardcrawl.cards.red.BodySlam;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
+import com.megacrit.cardcrawl.relics.Calipers;
 import com.megacrit.cardcrawl.relics.JuzuBracelet;
-import com.megacrit.cardcrawl.relics.Lantern;
 
 import java.io.File;
 import java.io.FileReader;
@@ -53,7 +53,7 @@ public class SearchSettings {
     public boolean takeBigFishRelic = false;
     public boolean takeDeadAdventurerFight = false;
     public boolean takeMausoleumRelic = false;
-    public boolean takeScrapOozeRelic = false;
+    public boolean takeScrapOozeRelic = true;
     public boolean takeAddictRelic = true; // Always assume you pay, no taking Shame
     public boolean takeMysteriousSphereFight = false;
     public boolean takeRedMaskAct3 = true;
@@ -95,7 +95,7 @@ public class SearchSettings {
 
     private void setDefaults() {
         relicsToBuy.add(JuzuBracelet.ID);
-        requiredRelics.add(Lantern.ID);
+        requiredRelics.add(Calipers.ID);
         requiredAct1Cards.add(BodySlam.ID);
     }
 

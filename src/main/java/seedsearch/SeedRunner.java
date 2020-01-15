@@ -238,16 +238,14 @@ public class SeedRunner {
         String relicKey = relic.relicId;
         switch(relicKey) {
             case TinyHouse.ID:
-                //TODO: Handle Tiny House
+                seedResult.addCardReward(reward.floor, AbstractDungeon.getRewardCards());
+                addGoldReward(50);
                 break;
             case WingBoots.ID:
                 this.bootsCharges = 3;
                 break;
             case CallingBell.ID:
-                for(int i = 0; i < 3; i++) {
-                    AbstractCard newCard = AbstractDungeon.getCard(AbstractCard.CardRarity.CURSE);
-                    addInvoluntaryCardReward(newCard, reward);
-                }
+                addInvoluntaryCardReward(new CurseOfTheBell(), reward);
                 String relic1 = AbstractDungeon.returnRandomRelicKey(AbstractRelic.RelicTier.COMMON);
                 String relic2 = AbstractDungeon.returnRandomRelicKey(AbstractRelic.RelicTier.UNCOMMON);
                 String relic3 = AbstractDungeon.returnRandomRelicKey(AbstractRelic.RelicTier.RARE);
