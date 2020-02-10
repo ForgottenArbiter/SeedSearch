@@ -4,6 +4,7 @@ import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.evacipated.cardcrawl.modthespire.patcher.PatchingException;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
+import com.megacrit.cardcrawl.helpers.GameTips;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.screens.DisplayOption;
 import javassist.CannotCompileException;
@@ -38,7 +39,8 @@ public class StartSearch {
         return new ExprEditor() {
             public void edit(NewExpr m) throws CannotCompileException {
                 if (m.getClassName().equals("com.badlogic.gdx.graphics.g2d.SpriteBatch")
-                        || m.getClassName().equals("com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch")) {
+                        || m.getClassName().equals("com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch")
+                        || m.getClassName().equals(GameTips.class.getName())) {
                     m.replace("{$_ = $0;}");
                 }
             }
@@ -47,7 +49,7 @@ public class StartSearch {
 
     private static class Locator extends SpireInsertLocator {
         public int[] Locate(CtBehavior ctMethodToPatch) throws CannotCompileException, PatchingException {
-            Matcher matcher = new Matcher.FieldAccessMatcher(CardCrawlGame.class, "tips");
+            Matcher matcher = new Matcher.FieldAccessMatcher(CardCrawlGame.class, "splashScreen");
             return LineFinder.findInOrder(ctMethodToPatch, new ArrayList<Matcher>(), matcher);
         }
     }

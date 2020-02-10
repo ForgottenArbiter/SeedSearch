@@ -33,6 +33,7 @@ import com.megacrit.cardcrawl.shop.Merchant;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.shop.StoreRelic;
+import com.megacrit.cardcrawl.vfx.AbstractGameEffect;
 import seedsearch.patches.AbstractRoomPatch;
 import seedsearch.patches.CardRewardScreenPatch;
 import seedsearch.patches.EventHelperPatch;
@@ -67,6 +68,7 @@ public class SeedRunner {
         this.settings = settings;
         AbstractDungeon.fadeColor = Settings.SHADOW_COLOR;
         CharacterManager characterManager = new CharacterManager();
+        CardCrawlGame.characterManager = characterManager;
         characterManager.setChosenCharacter(settings.playerClass);
         currentSeed = settings.startSeed;
         AbstractDungeon.ascensionLevel = settings.ascensionLevel;
@@ -503,6 +505,9 @@ public class SeedRunner {
                 }
             }
             AbstractDungeon.currMapNode = node;
+            if (AbstractDungeon.getCurrRoom().phase == AbstractRoom.RoomPhase.COMBAT) {
+                AbstractDungeon.getCurrRoom().phase = AbstractRoom.RoomPhase.COMPLETE;
+            }
             switch(result) {
                 case EVENT:
                     Random eventRngDuplicate = new Random(Settings.seed, AbstractDungeon.eventRng.counter);
@@ -544,11 +549,15 @@ public class SeedRunner {
                     break;
                 case TREASURE:
                     AbstractChest chest = AbstractDungeon.getRandomChest();
+                    ShowCardAndObtainEffectPatch.resetCards();
                     chest.open(false);
                     addGoldReward(combatGold);
                     Reward treasureRelicReward = new Reward(AbstractDungeon.floorNum);
                     for(AbstractRelic treasureRelic : combatRelics) {
                         awardRelic(treasureRelic, treasureRelicReward);
+                    }
+                    for (AbstractCard card : ShowCardAndObtainEffectPatch.obtainedCards) {
+                        addInvoluntaryCardReward(card, treasureRelicReward);
                     }
                     seedResult.addAllCardRewards(combatCardRewards);
                     seedResult.addMiscReward(treasureRelicReward);
@@ -909,6 +918,7 @@ public class SeedRunner {
         AbstractDungeon.floorNum += 1;
         AbstractDungeon.currMapNode = new MapRoomNode(-1, 15);
         AbstractDungeon.currMapNode.room = new MonsterRoomBoss();
+        AbstractDungeon.currMapNode.room.phase = AbstractRoom.RoomPhase.COMPLETE;
         if (AbstractDungeon.ascensionLevel == 20 && currentAct == 2) {
             seedResult.registerBossCombat(AbstractDungeon.bossList.get(1));
             AbstractDungeon.floorNum += 1;

@@ -6,7 +6,7 @@ A mod that searches through Slay the Spire seeds.
 * Slay the Spire
 * ModTheSpire (https://github.com/kiooeht/ModTheSpire)
 
-Note: Use of other mods, including BaseMod, with SeedSearch is not recommended and will likely fail.
+Note: Because it runs a headless version of Slay the Spire and has no access to graphics, SeedSearch is not designed for compatibility with all other mods, and has no mod requirements. Also, any mod can change the outcome of seeds, so you should not use any mods, including BaseMod, with SeedSearch when searching for seeds to use in unmodded gameplay. Still, some character mods, such as Thorton and Jorbs Mod, have been found to work (or at least not crash/hang) with SeedSearch.
 
 ## Setup and Usage
 

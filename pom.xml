@@ -5,7 +5,7 @@
 
     <groupId>seedsearch</groupId>
     <artifactId>SeedSearch</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
     <name>SeedSearch</name>
     <description>Finds seeds with desired properties</description>
