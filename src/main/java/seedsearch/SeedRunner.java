@@ -665,6 +665,7 @@ public class SeedRunner {
                                 addGoldReward(miscRng.random(25, 35));
                                 seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                                 seedResult.registerCombat(monster);
+                                break;
                             } else {
                                 encounterChance += 25;
                             }
