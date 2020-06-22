@@ -17,14 +17,17 @@ import com.megacrit.cardcrawl.events.city.*;
 import com.megacrit.cardcrawl.events.exordium.*;
 import com.megacrit.cardcrawl.events.shrines.*;
 import com.megacrit.cardcrawl.helpers.EventHelper;
+import com.megacrit.cardcrawl.helpers.PotionHelper;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
 import com.megacrit.cardcrawl.helpers.TipTracker;
 import com.megacrit.cardcrawl.map.MapEdge;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.neow.NeowEvent;
 import com.megacrit.cardcrawl.neow.NeowReward;
+import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.relics.*;
+import com.megacrit.cardcrawl.rewards.RewardItem;
 import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
 import com.megacrit.cardcrawl.rewards.chests.BossChest;
 import com.megacrit.cardcrawl.rooms.*;
@@ -38,6 +41,7 @@ import seedsearch.patches.AbstractRoomPatch;
 import seedsearch.patches.CardRewardScreenPatch;
 import seedsearch.patches.EventHelperPatch;
 import seedsearch.patches.ShowCardAndObtainEffectPatch;
+import seedsearch.patches.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -53,6 +57,7 @@ public class SeedRunner {
     public static ArrayList<AbstractRelic> combatRelics;
     public static ArrayList<Reward> combatCardRewards;
     public static int combatGold = 0;
+    public static ArrayList<AbstractPotion> combatPotions;
 
     private AbstractPlayer player;
     private int currentAct;
@@ -83,6 +88,7 @@ public class SeedRunner {
         player = AbstractDungeon.player;
         AbstractDungeon.reset();
         resetCharacter();
+        clearCombatRewards();
 
         currentAct = 0;
         actFloor = 0;
@@ -111,6 +117,25 @@ public class SeedRunner {
         CardCrawlGame.music.update();
     }
 
+    private boolean mapIsIntractable(ArrayList<ArrayList<MapRoomNode>> map) {
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 7; j++) {
+                if(map.get(i).get(j).room instanceof ShopRoom) {
+                    return false;
+                }
+            }
+        }
+        for(int j = 0; j < 7; j++) {
+            if(map.get(5).get(j).hasEdges()) {
+                AbstractRoom room = map.get(5).get(j).room;
+                if (!(room instanceof MonsterRoomElite)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private boolean runSeed() {
         if (!settings.speedrunPace) {
             CardCrawlGame.playtime = 900F;
@@ -127,6 +152,10 @@ public class SeedRunner {
             throw new RuntimeException("The 'neowChoice' setting must be between 0 and 3.");
         }
         claimNeowReward(neowRewards.get(settings.neowChoice));
+
+        if (!mapIsIntractable( AbstractDungeon.map)) {
+            return false;
+        }
 
         runPath(exordiumPath);
         getBossRewards();
@@ -173,6 +202,7 @@ public class SeedRunner {
         combatGold = 0;
         combatRelics = new ArrayList<>();
         combatCardRewards = new ArrayList<>();
+        combatPotions = new ArrayList<>();
     }
 
     private ArrayList<NeowReward> getNeowRewards() {
@@ -202,6 +232,9 @@ public class SeedRunner {
             for (AbstractCard card : ShowCardAndObtainEffectPatch.obtainedCards) {
                 addInvoluntaryCardReward(card, reward);
             }
+        }
+        if (combatPotions.size() > 0) {
+            reward.addPotions(combatPotions);
         }
         if (neowOption.type == NeowReward.NeowRewardType.TRANSFORM_CARD) {
             // We're assuming we remove the first card in the deck here
@@ -283,7 +316,7 @@ public class SeedRunner {
         ArrayList<ArrayList<ArrayList<MapRoomNode>>> parents = new ArrayList<>();
         for(int i = 0; i < 15; i++) {
             for(int j = 0; j < 7; j++) {
-                weights[i][j] = getRoomScore(map.get(i).get(j).room);
+                weights[i][j] = getRoomScore(map.get(i).get(j).room, i);
                 for(int k = 0; k < 4; k++) {
                     if (i == 0) {
                         pathWeights[i][j][k] = weights[i][j];
@@ -387,7 +420,7 @@ public class SeedRunner {
         ArrayList<ArrayList<MapRoomNode>> parents = new ArrayList<>();
         for(int i = 0; i < 15; i++) {
             for(int j = 0; j < 7; j++) {
-                weights[i][j] = getRoomScore(map.get(i).get(j).room);
+                weights[i][j] = getRoomScore(map.get(i).get(j).room, i);
                 if(i == 0) {
                     pathWeights[i][j] = weights[i][j];
                 } else {
@@ -436,7 +469,10 @@ public class SeedRunner {
         return path;
     }
 
-    private float getRoomScore(AbstractRoom room) {
+    private float getRoomScore(AbstractRoom room, int y) {
+        if (y > 5) {
+            return 0f;
+        }
         if (room instanceof TreasureRoom) {
             return 0f;
         } else if (room instanceof MonsterRoomElite) {
@@ -508,6 +544,7 @@ public class SeedRunner {
             if (AbstractDungeon.getCurrRoom().phase == AbstractRoom.RoomPhase.COMBAT) {
                 AbstractDungeon.getCurrRoom().phase = AbstractRoom.RoomPhase.COMPLETE;
             }
+            clearCombatRewards();
             switch(result) {
                 case EVENT:
                     Random eventRngDuplicate = new Random(Settings.seed, AbstractDungeon.eventRng.counter);
@@ -524,6 +561,12 @@ public class SeedRunner {
                     seedResult.registerCombat(monster);
                     seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                     int gold = AbstractDungeon.treasureRng.random(10, 20);
+                    AbstractPotion possibleMonsterPotionReward = getPotionReward();
+                    if (possibleMonsterPotionReward != null) {
+                        Reward monsterPotionReward = new Reward(AbstractDungeon.floorNum);
+                        monsterPotionReward.addPotion(possibleMonsterPotionReward);
+                        seedResult.addMiscReward(monsterPotionReward);
+                    }
                     addGoldReward(gold);
                     break;
                 case ELITE:
@@ -536,6 +579,12 @@ public class SeedRunner {
                     if(player.hasRelic(BlackStar.ID)) {
                         AbstractRelic starRelic = AbstractDungeon.returnRandomNonCampfireRelic(tier);
                         awardRelic(starRelic, relicReward);
+                    }
+                    AbstractPotion possibleElitePotionReward = getPotionReward();
+                    if (possibleElitePotionReward != null) {
+                        Reward elitePotionReward = new Reward(AbstractDungeon.floorNum);
+                        elitePotionReward.addPotion(possibleElitePotionReward);
+                        seedResult.addMiscReward(elitePotionReward);
                     }
                     seedResult.addMiscReward(relicReward);
                     seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
@@ -613,12 +662,30 @@ public class SeedRunner {
                 }
             }
             for (StorePotion potion : potions) {
-                //Potions not implemented yet in seedsearch
+                shopReward.addPotion(potion.potion);
             }
         } catch(NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return shopReward;
+    }
+
+
+    private AbstractPotion getPotionReward() {
+        int chance = 40;
+        chance = chance + AbstractRoom.blizzardPotionMod;
+
+        if (AbstractDungeon.player.hasRelic("White Beast Statue")) {
+            chance = 100;
+        }
+
+        if (AbstractDungeon.potionRng.random(0, 99) >= chance && !Settings.isDebug) {
+            AbstractRoom.blizzardPotionMod += 10;
+            return null;
+        } else {
+            AbstractRoom.blizzardPotionMod -= 10;
+            return AbstractDungeon.returnRandomPotion();
+        }
     }
 
     private Reward getEventReward(AbstractEvent event, String eventKey, int floor) {
@@ -905,6 +972,23 @@ public class SeedRunner {
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
+                break;
+            case Lab.ID:
+                ArrayList<AbstractPotion> potions = new ArrayList<>();
+                potions.add(PotionHelper.getRandomPotion());
+                potions.add(PotionHelper.getRandomPotion());
+                if (AbstractDungeon.ascensionLevel < 15) {
+                    potions.add(PotionHelper.getRandomPotion());
+                }
+                reward.addPotions(potions);
+                break;
+            case WomanInBlue.ID:
+                ArrayList<AbstractPotion> womanPotions = new ArrayList<>();
+                womanPotions.add(PotionHelper.getRandomPotion());
+                womanPotions.add(PotionHelper.getRandomPotion());
+                womanPotions.add(PotionHelper.getRandomPotion());
+                reward.addPotions(womanPotions);
+                break;
         }
         if (ShowCardAndObtainEffectPatch.obtainedCards.size() > 0) {
             for (AbstractCard card : ShowCardAndObtainEffectPatch.obtainedCards) {

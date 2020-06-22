@@ -65,6 +65,8 @@ public class CombatRewardScreenPatch {
                 SeedRunner.combatCardRewards.add(Reward.makeCardReward(AbstractDungeon.floorNum, item.cards));
             } else if (item.type == RewardItem.RewardType.GOLD) {
                 SeedRunner.combatGold = item.goldAmt;
+            } else if (item.type == RewardItem.RewardType.POTION) {
+                SeedRunner.combatPotions.add(item.potion);
             }
         }
     }

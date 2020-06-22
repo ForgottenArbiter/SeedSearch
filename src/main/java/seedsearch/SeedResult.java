@@ -1,10 +1,11 @@
 package seedsearch;
 
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.cards.green.*;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.SeedHelper;
 import com.megacrit.cardcrawl.neow.NeowReward;
-import com.megacrit.cardcrawl.relics.AbstractRelic;
+import com.megacrit.cardcrawl.relics.*;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -123,6 +124,58 @@ public class SeedResult {
         return true;
     }
 
+    public boolean noDamage() {
+        ArrayList<AbstractCard> superEarlyCards = new ArrayList<>();
+        for (Reward reward : miscRewards) {
+            if (reward.floor < 6) {
+                superEarlyCards.addAll(reward.cards);
+            }
+        }
+        for (Reward reward : cardRewards) {
+            if (reward.floor < 6) {
+                superEarlyCards.addAll(reward.cards);
+            }
+        }
+        ArrayList<String> damageCards = new ArrayList<>();
+        ArrayList<String> foundCards = new ArrayList<>();
+        int count = 0;
+        damageCards.add("Dagger Spray");
+        damageCards.add("Dagger Throw");
+        damageCards.add(DeadlyPoison.ID);
+        damageCards.add(FlyingKnee.ID);
+        damageCards.add(PoisonedStab.ID);
+        damageCards.add(QuickSlash.ID);
+        //damageCards.add(Slice.ID);
+        //damageCards.add(SuckerPunch.ID);
+        damageCards.add(AllOutAttack.ID);
+        damageCards.add(Backstab.ID);
+        damageCards.add(BouncingFlask.ID);
+        //damageCards.add(Choke.ID);
+        damageCards.add(CripplingPoison.ID);
+        damageCards.add(Dash.ID);
+        //damageCards.add(EndlessAgony.ID);
+        damageCards.add(Finisher.ID);
+        damageCards.add(Flechettes.ID);
+        damageCards.add(MasterfulStab.ID);
+        //damageCards.add(NoxiousFumes.ID);
+        damageCards.add(Predator.ID);
+        damageCards.add(RiddleWithHoles.ID);
+        damageCards.add(Skewer.ID);
+        damageCards.add(Terror.ID);
+        for(AbstractCard card : superEarlyCards) {
+            if(damageCards.contains(card.cardID)) {
+                count += 1;
+                foundCards.add(card.cardID);
+            }
+        }
+        if(count > 1) {
+            return false;
+        } else {
+            System.out.println(foundCards);
+            return true;
+        }
+    }
+
     public boolean testAct1Filters(SearchSettings settings) {
         if (!relics.containsAll(settings.requiredAct1Relics)) {
             return false;
@@ -131,7 +184,30 @@ public class SeedResult {
         if (!allCards.containsAll(settings.requiredAct1Cards)) {
             return false;
         }
-        return true;
+
+        if (monsters.size() < 4) {
+            return false;
+        }
+        String first_monster = monsters.get(3);
+        if (!(first_monster.equals("Gremlin Gang") || first_monster.equals("Exordium Thugs") || first_monster.equals("Exordium Wildlife") || first_monster.equals("Large Slime"))) {
+            return false;
+        }
+
+        for (Reward reward : miscRewards) {
+            if (reward.floor > 5) {
+                break;
+            }
+            if (reward.potions.size() > 0) {
+                return false;
+            }
+        }
+
+        if (!(relics.get(0).equals(EternalFeather.ID) || relics.get(0).equals(BlackStar.ID) || relics.get(0).equals(WristBlade.ID) || relics.get(0).equals(HoveringKite.ID) || relics.get(0).equals(CallingBell.ID) || relics.get(0).equals(EmptyCage.ID))) {
+            return false;
+        }
+
+        return noDamage();
+
     }
 
     private ArrayList<String> getAllCardIds() {
