@@ -5,13 +5,16 @@ import com.megacrit.cardcrawl.cards.green.*;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.SeedHelper;
 import com.megacrit.cardcrawl.neow.NeowReward;
+import com.megacrit.cardcrawl.potions.*;
 import com.megacrit.cardcrawl.relics.*;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 
 public class SeedResult {
 
+    private static ArrayList<String> noDamageCards;
     private ArrayList<Reward> miscRewards;
     private ArrayList<Reward> shopRewards;
     private ArrayList<Reward> cardRewards;
@@ -25,6 +28,37 @@ public class SeedResult {
     private int numElites;
     private int numCombats;
     private long seed;
+
+    static {
+        noDamageCards = new ArrayList<>();
+        noDamageCards.add(Deflect.ID);
+        noDamageCards.add(Backflip.ID);
+        noDamageCards.add(Acrobatics.ID);
+        noDamageCards.add(Outmaneuver.ID);
+        noDamageCards.add(PiercingWail.ID);
+        noDamageCards.add(Prepared.ID);
+        noDamageCards.add(Accuracy.ID);
+        noDamageCards.add(Blur.ID);
+        noDamageCards.add(CalculatedGamble.ID);
+        noDamageCards.add(Catalyst.ID);
+        noDamageCards.add(Concentrate.ID);
+        noDamageCards.add(EscapePlan.ID);
+        noDamageCards.add(Expertise.ID);
+        noDamageCards.add(Footwork.ID);
+        noDamageCards.add(LegSweep.ID);
+        noDamageCards.add(Reflex.ID);
+        noDamageCards.add(Setup.ID);
+        noDamageCards.add(Tactician.ID);
+        noDamageCards.add(WellLaidPlans.ID);
+        noDamageCards.add(AfterImage.ID);
+        noDamageCards.add(BulletTime.ID);
+        noDamageCards.add(Burst.ID);
+        noDamageCards.add(Doppelganger.ID);
+        noDamageCards.add(Malaise.ID);
+        noDamageCards.add(Nightmare.ID);
+        noDamageCards.add(ToolsOfTheTrade.ID);
+        noDamageCards.add(WraithForm.ID);
+    }
 
     public SeedResult(long seed) {
         this.seed = seed;
@@ -124,6 +158,30 @@ public class SeedResult {
         return true;
     }
 
+    public boolean reallyNoDamage() {
+        if (monsters.size() < 5) {
+            return false;
+        }
+        int count = 0;
+        ArrayList<AbstractCard> superEarlyCards = new ArrayList<>();
+        for (Reward reward : miscRewards) {
+            if (reward.floor < 6) {
+                superEarlyCards.addAll(reward.cards);
+            }
+        }
+        for (Reward reward : cardRewards) {
+            if (reward.floor < 6) {
+                superEarlyCards.addAll(reward.cards);
+            }
+        }
+        for (AbstractCard card : superEarlyCards) {
+            if (!noDamageCards.contains(card.cardID)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean noDamage() {
         ArrayList<AbstractCard> superEarlyCards = new ArrayList<>();
         for (Reward reward : miscRewards) {
@@ -176,6 +234,10 @@ public class SeedResult {
         }
     }
 
+    public boolean forcedMonsterFights() {
+        return monsters.size() > 4;
+    }
+
     public boolean testAct1Filters(SearchSettings settings) {
         if (!relics.containsAll(settings.requiredAct1Relics)) {
             return false;
@@ -185,7 +247,7 @@ public class SeedResult {
             return false;
         }
 
-        if (monsters.size() < 4) {
+        if (monsters.size() < 5) {
             return false;
         }
         String first_monster = monsters.get(3);
@@ -197,16 +259,22 @@ public class SeedResult {
             if (reward.floor > 5) {
                 break;
             }
-            if (reward.potions.size() > 0) {
+            if (reward.potions.size() > 1) {
                 return false;
+            } else if (reward.potions.size() == 1) {
+                AbstractPotion potion = reward.potions.get(0);
+                if (!(potion.ID.equals(DexterityPotion.POTION_ID) || potion.ID.equals(SpeedPotion.POTION_ID) || potion.ID.equals(EnergyPotion.POTION_ID))) {
+                    //return false;
+                }
             }
         }
 
-        if (!(relics.get(0).equals(EternalFeather.ID) || relics.get(0).equals(BlackStar.ID) || relics.get(0).equals(WristBlade.ID) || relics.get(0).equals(HoveringKite.ID) || relics.get(0).equals(CallingBell.ID) || relics.get(0).equals(EmptyCage.ID))) {
+        if (!(relics.get(0).equals(EternalFeather.ID) || relics.get(0).equals(BlackStar.ID) || relics.get(0).equals(WristBlade.ID) || relics.get(0).equals(HoveringKite.ID) || relics.get(0).equals(CallingBell.ID) || relics.get(0).equals(EmptyCage.ID) || relics.get(0).equals(SnakeRing.ID) || relics.get(0).equals(BustedCrown.ID))) {
             return false;
         }
+        return true;
 
-        return noDamage();
+        // return noDamage();
 
     }
 

@@ -79,6 +79,7 @@ public class SeedRunner {
         AbstractDungeon.ascensionLevel = settings.ascensionLevel;
         Settings.seedSet = true;
         this.settings.checkIds();
+        Settings.setFinalActAvailability();
     }
 
     private void setSeed(long seed) {
@@ -118,6 +119,8 @@ public class SeedRunner {
     }
 
     private boolean mapIsIntractable(ArrayList<ArrayList<MapRoomNode>> map) {
+        int count = 0;
+        boolean burning = false;
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 7; j++) {
                 if(map.get(i).get(j).room instanceof ShopRoom) {
@@ -130,13 +133,22 @@ public class SeedRunner {
                 AbstractRoom room = map.get(5).get(j).room;
                 if (!(room instanceof MonsterRoomElite)) {
                     return false;
+                } else {
+                    if (map.get(5).get(j).hasEmeraldKey) {
+                        burning = true;
+                    }
+                    count += 1;
                 }
             }
         }
-        return true;
+        return count == 1 && burning;
     }
 
-    private boolean runSeed() {
+    private boolean runSeed(int neowChoice) {
+        return runSeed(neowChoice, false);
+    }
+
+    private boolean runSeed(int neowChoice, boolean swapChances) {
         if (!settings.speedrunPace) {
             CardCrawlGame.playtime = 900F;
         } else {
@@ -151,14 +163,14 @@ public class SeedRunner {
         if (settings.neowChoice < 0 || settings.neowChoice > 3) {
             throw new RuntimeException("The 'neowChoice' setting must be between 0 and 3.");
         }
-        claimNeowReward(neowRewards.get(settings.neowChoice));
+        claimNeowReward(neowRewards.get(neowChoice));
 
         if (!mapIsIntractable( AbstractDungeon.map)) {
             return false;
         }
 
         runPath(exordiumPath);
-        getBossRewards();
+//        getBossRewards();
 
         seedResult.updateRelics();
         if (!seedResult.testAct1Filters(settings)) {
@@ -193,9 +205,14 @@ public class SeedRunner {
         return seedResult.testFinalFilters(settings);
     }
 
-    public boolean runSeed(long seed) {
+    public boolean runSeed(long seed, int neowChoice) {
         setSeed(seed);
-        return runSeed();
+        return runSeed(neowChoice);
+    }
+
+    public boolean runSeed(long seed, int neowChoice, boolean swapChances) {
+        setSeed(seed);
+        return runSeed(neowChoice, swapChances);
     }
 
     public static void clearCombatRewards() {
@@ -412,6 +429,10 @@ public class SeedRunner {
     }
 
     private ArrayList<MapRoomNode> findMapPath(ArrayList<ArrayList<MapRoomNode>> map) {
+        return findMapPath(map, false);
+    }
+
+    private ArrayList<MapRoomNode> findMapPath(ArrayList<ArrayList<MapRoomNode>> map, boolean swapChance) {
         if(bootsCharges > 0) {
             return findBootsPath(map);
         }
@@ -420,7 +441,7 @@ public class SeedRunner {
         ArrayList<ArrayList<MapRoomNode>> parents = new ArrayList<>();
         for(int i = 0; i < 15; i++) {
             for(int j = 0; j < 7; j++) {
-                weights[i][j] = getRoomScore(map.get(i).get(j).room, i);
+                weights[i][j] = getRoomScore(map.get(i).get(j).room, i, swapChance);
                 if(i == 0) {
                     pathWeights[i][j] = weights[i][j];
                 } else {
@@ -470,6 +491,10 @@ public class SeedRunner {
     }
 
     private float getRoomScore(AbstractRoom room, int y) {
+        return getRoomScore(room, y, false);
+    }
+
+    private float getRoomScore(AbstractRoom room, int y, boolean swapChance) {
         if (y > 5) {
             return 0f;
         }
@@ -478,12 +503,18 @@ public class SeedRunner {
         } else if (room instanceof MonsterRoomElite) {
             return settings.eliteRoomWeight;
         } else if (room instanceof MonsterRoom) {
+            if (swapChance) {
+                return settings.eventRoomWeight;
+            }
             return settings.monsterRoomWeight;
         } else if (room instanceof RestRoom) {
             return settings.restRoomWeight;
         } else if (room instanceof ShopRoom) {
             return settings.shopRoomWeight;
         } else if (room instanceof EventRoom) {
+            if (swapChance) {
+                return settings.monsterRoomWeight;
+            }
             return settings.eventRoomWeight;
         } else {
             return 0f;
@@ -497,6 +528,9 @@ public class SeedRunner {
     private void runPath(ArrayList<MapRoomNode> path) {
         for(actFloor = 0; actFloor < path.size(); actFloor++) {
             AbstractDungeon.floorNum += 1;
+            if (AbstractDungeon.floorNum > 6) {
+                break;
+            }
             AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
             MapRoomNode node = path.get(actFloor);
             RoomType result;
