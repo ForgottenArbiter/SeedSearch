@@ -60,6 +60,6 @@ public class Reward {
     }
 
     public boolean isEmpty() {
-        return cards.isEmpty() && relics.isEmpty();
+        return cards.isEmpty() && relics.isEmpty() && potions.isEmpty();
     }
 }

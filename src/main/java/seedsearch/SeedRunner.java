@@ -141,7 +141,8 @@ public class SeedRunner {
                 }
             }
         }
-        return count == 1 && burning;
+        return true;
+//        return count == 1 && burning;
     }
 
     private boolean runSeed(int neowChoice) {
@@ -156,7 +157,7 @@ public class SeedRunner {
         }
 
         AbstractDungeon exordium = new Exordium(player, new ArrayList<>());
-        ArrayList<MapRoomNode> exordiumPath = findMapPath(AbstractDungeon.map);
+        ArrayList<MapRoomNode> exordiumPath = findMapPath(AbstractDungeon.map, swapChances);
 
         ArrayList<NeowReward> neowRewards = getNeowRewards();
         seedResult.addNeowRewards(neowRewards);
@@ -175,6 +176,8 @@ public class SeedRunner {
         seedResult.updateRelics();
         if (!seedResult.testAct1Filters(settings)) {
             return false;
+        } else if (true) {
+            return true;
         }
 
         currentAct += 1;

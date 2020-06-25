@@ -15,6 +15,7 @@ import java.util.Base64;
 public class SeedResult {
 
     private static ArrayList<String> noDamageCards;
+    private static ArrayList<String> damageCards;
     private ArrayList<Reward> miscRewards;
     private ArrayList<Reward> shopRewards;
     private ArrayList<Reward> cardRewards;
@@ -58,6 +59,35 @@ public class SeedResult {
         noDamageCards.add(Nightmare.ID);
         noDamageCards.add(ToolsOfTheTrade.ID);
         noDamageCards.add(WraithForm.ID);
+
+
+        damageCards = new ArrayList<>();
+        damageCards.add("Dagger Spray");
+        damageCards.add("Dagger Throw");
+        damageCards.add(DeadlyPoison.ID);
+        damageCards.add(FlyingKnee.ID);
+        damageCards.add(PoisonedStab.ID);
+        damageCards.add(QuickSlash.ID);
+        damageCards.add(Slice.ID);
+        //damageCards.add(SuckerPunch.ID);
+        damageCards.add(AllOutAttack.ID);
+        damageCards.add(Backstab.ID);
+        damageCards.add(BouncingFlask.ID);
+        //damageCards.add(Choke.ID);
+        damageCards.add(CripplingPoison.ID);
+        damageCards.add(Dash.ID);
+        //damageCards.add(EndlessAgony.ID);
+        damageCards.add(Finisher.ID);
+        damageCards.add(Flechettes.ID);
+        damageCards.add(MasterfulStab.ID);
+        damageCards.add(NoxiousFumes.ID);
+        damageCards.add(Predator.ID);
+        damageCards.add(RiddleWithHoles.ID);
+        damageCards.add(Skewer.ID);
+        damageCards.add(Terror.ID);
+        damageCards.add(Unload.ID);
+        damageCards.add(DieDieDie.ID);
+        damageCards.add(CorpseExplosion.ID);
     }
 
     public SeedResult(long seed) {
@@ -194,32 +224,8 @@ public class SeedResult {
                 superEarlyCards.addAll(reward.cards);
             }
         }
-        ArrayList<String> damageCards = new ArrayList<>();
         ArrayList<String> foundCards = new ArrayList<>();
         int count = 0;
-        damageCards.add("Dagger Spray");
-        damageCards.add("Dagger Throw");
-        damageCards.add(DeadlyPoison.ID);
-        damageCards.add(FlyingKnee.ID);
-        damageCards.add(PoisonedStab.ID);
-        damageCards.add(QuickSlash.ID);
-        //damageCards.add(Slice.ID);
-        //damageCards.add(SuckerPunch.ID);
-        damageCards.add(AllOutAttack.ID);
-        damageCards.add(Backstab.ID);
-        damageCards.add(BouncingFlask.ID);
-        //damageCards.add(Choke.ID);
-        damageCards.add(CripplingPoison.ID);
-        damageCards.add(Dash.ID);
-        //damageCards.add(EndlessAgony.ID);
-        damageCards.add(Finisher.ID);
-        damageCards.add(Flechettes.ID);
-        damageCards.add(MasterfulStab.ID);
-        //damageCards.add(NoxiousFumes.ID);
-        damageCards.add(Predator.ID);
-        damageCards.add(RiddleWithHoles.ID);
-        damageCards.add(Skewer.ID);
-        damageCards.add(Terror.ID);
         for(AbstractCard card : superEarlyCards) {
             if(damageCards.contains(card.cardID)) {
                 count += 1;
@@ -263,8 +269,8 @@ public class SeedResult {
                 return false;
             } else if (reward.potions.size() == 1) {
                 AbstractPotion potion = reward.potions.get(0);
-                if (!(potion.ID.equals(DexterityPotion.POTION_ID) || potion.ID.equals(SpeedPotion.POTION_ID) || potion.ID.equals(EnergyPotion.POTION_ID))) {
-                    //return false;
+                if (!(potion.ID.equals(DexterityPotion.POTION_ID) || potion.ID.equals(SkillPotion.POTION_ID) || potion.ID.equals(SpeedPotion.POTION_ID) || potion.ID.equals(EnergyPotion.POTION_ID) || potion.ID.equals(GamblersBrew.POTION_ID) || potion.ID.equals(SwiftPotion.POTION_ID) || potion.ID.equals(ColorlessPotion.POTION_ID))) {
+                    return false;
                 }
             }
         }
@@ -272,9 +278,8 @@ public class SeedResult {
         if (!(relics.get(0).equals(EternalFeather.ID) || relics.get(0).equals(BlackStar.ID) || relics.get(0).equals(WristBlade.ID) || relics.get(0).equals(HoveringKite.ID) || relics.get(0).equals(CallingBell.ID) || relics.get(0).equals(EmptyCage.ID) || relics.get(0).equals(SnakeRing.ID) || relics.get(0).equals(BustedCrown.ID))) {
             return false;
         }
-        return true;
 
-        // return noDamage();
+        return noDamage();
 
     }
 
@@ -332,6 +337,12 @@ public class SeedResult {
         System.out.println(events);
         System.out.println("Map path:");
         System.out.println(mapPath);
+        System.out.println("Potions:");
+        for (Reward reward : miscRewards) {
+            if (reward.potions.size() > 0) {
+                System.out.println(String.format("Floor %d: %s", reward.floor, reward.potions));
+            }
+        }
         System.out.println("Card choices:");
         for (Reward reward : cardRewards) {
             if (reward.cards.size() > 0) {
