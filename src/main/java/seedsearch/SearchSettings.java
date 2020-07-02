@@ -19,20 +19,20 @@ public class SearchSettings {
 
     // Core search parameters
 
-    public int ascensionLevel = 0;
-    public AbstractPlayer.PlayerClass playerClass = AbstractPlayer.PlayerClass.IRONCLAD;
-    public long startSeed = 0L;
-    public long endSeed = 100L;
+    public int ascensionLevel = 20;
+    public AbstractPlayer.PlayerClass playerClass = AbstractPlayer.PlayerClass.THE_SILENT;
+    public long startSeed = 20_687_182_354L;
+    public long endSeed = 20_687_182_454L;
     public boolean verbose = true;
     public boolean exitAfterSearch = false;
 
     // Navigation
 
     public float eliteRoomWeight = 1.2f;
-    public float monsterRoomWeight = 1f;
+    public float monsterRoomWeight = 10.0f;
     public float restRoomWeight = 0f;
     public float shopRoomWeight = 0.9f;
-    public float eventRoomWeight = 0.9f;
+    public float eventRoomWeight = 1.0f;
     public float wingBootsThreshold = 1f; // Wing boots charges are used if weight is changed by this amount
 
     // General decisions
@@ -42,17 +42,17 @@ public class SearchSettings {
     public ArrayList<String> bossRelicsToTake = new ArrayList<>(); // Give them in priority order to always take a relic
     public int neowChoice = 3; // 3 is the boss relic trade
     public boolean useShovel = false;
-    public boolean speedrunPace = true; // Do you reach Act 3 fast enough to skip Secret Portal?
+    public boolean speedrunPace = false; // Do you reach Act 3 fast enough to skip Secret Portal?
     public boolean act4 = false;
     public boolean alwaysSpawnBottledTornado = true; //Assume you always have a power for Bottled Tornado to spawn
 
     // Event decisions
 
     public boolean takeSerpentGold = false;
-    public boolean takeWarpedTongs = false;
-    public boolean takeBigFishRelic = false;
+    public boolean takeWarpedTongs = true;
+    public boolean takeBigFishRelic = true;
     public boolean takeDeadAdventurerFight = false;
-    public boolean takeMausoleumRelic = false;
+    public boolean takeMausoleumRelic = true;
     public boolean takeScrapOozeRelic = true;
     public boolean takeAddictRelic = true; // Always assume you pay, no taking Shame
     public boolean takeMysteriousSphereFight = false;
@@ -63,7 +63,7 @@ public class SearchSettings {
     public boolean takeGoldenIdolWithCurse = false;
     public boolean tradeGoldenIdolForBloody = true;
     public boolean takeCursedTome = true;
-    public boolean tradeFaces = false;
+    public boolean tradeFaces = true;
     public boolean takeMindBloomGold = false; // Mind Bloom choices in order of priority
     public boolean takeMindBloomFight = true;
     public boolean takeMindBloomUpgrade = false;
@@ -86,17 +86,14 @@ public class SearchSettings {
     public ArrayList<String> requiredEvents = new ArrayList<>();
     public ArrayList<String> requiredCombats = new ArrayList<>();
     public int minimumElites = 0;
-    public int maximumElites = 1;
+    public int maximumElites = 17;
     public int minimumCombats = 0;
-    public int maximumCombats = 33;
+    public int maximumCombats = 50;
 
     public SearchSettings () {
     }
 
     private void setDefaults() {
-        relicsToBuy.add(JuzuBracelet.ID);
-        requiredRelics.add(Calipers.ID);
-        requiredAct1Cards.add(BodySlam.ID);
     }
 
     public static SearchSettings loadSettings () {

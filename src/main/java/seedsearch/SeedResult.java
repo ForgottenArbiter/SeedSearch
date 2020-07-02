@@ -235,7 +235,7 @@ public class SeedResult {
         if(count > 1) {
             return false;
         } else {
-            System.out.println(foundCards);
+            // System.out.println(foundCards);
             return true;
         }
     }

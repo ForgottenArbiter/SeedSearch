@@ -1,5 +1,5 @@
 # SeedSearch
-A mod that searches through Slay the Spire seeds.
+A mod that searches through Slay the Spire seeds. This is the hard-seeds branch, so the mod is altered to try to find impossible seeds.
 
 ## Requirements
 
@@ -8,18 +8,32 @@ A mod that searches through Slay the Spire seeds.
 
 Note: Because it runs a headless version of Slay the Spire and has no access to graphics, SeedSearch is not designed for compatibility with all other mods, and has no mod requirements. Also, any mod can change the outcome of seeds, so you should not use any mods, including BaseMod, with SeedSearch when searching for seeds to use in unmodded gameplay. Still, some character mods, such as Thorton and Jorbs Mod, have been found to work (or at least not crash/hang) with SeedSearch.
 
+## Building SeedSearch
+
+You will need JDK 1.8 and Maven.
+* Configure `pom.xml` to correctly point at `desktop-1.0.jar` (Slay the Spire) and `ModTheSpire.jar` (Mod the Spire). By default these are assumed to be in `../lib` relative to this repo.
+* Run `mvn package`
+
 ## Setup and Usage
 
-Run the mod once to search the first 100 seeds with some default settings. On the current patch of the game (v2.0), you should find one seed (54). A file called "searchConfig.json" should have been created in your current working directory. Edit that file to control the behavior of future searches. Note that the game will not launch. All output will be printed to the program's stdout.
+Run the mod once to search the 100 seeds with some default settings. A file called "searchConfig.json" should have been created in your current working directory, and you should find one seed. Edit that file to control the behavior of future searches. Note that the game will not launch. All output will be printed to the program's stdout. If you do not find one seed in your initial search, you probably do not have all cards and relics unlocked!
+
+## What this tool looks for in hard seeds
+
+Seeds will only be returned if:
+* An elite fights is guaranteed on floor 6
+* No shops or rest site tiles are generated before the elite
+* No "useful" potions are available before floor 6
+* There is a "hard" hallway fight before the elite
+* At most one useful damage card is generated for Silent
+* The above is true for all Neow bonuses, whether fights or events are prioritized
+
+To customize this, you will need to modify the code.
 
 ## Settings
 
-These are the descriptions of the settings in searchConfig.json. Edit them as you like to control the outcome of the seed search.
+These are the descriptions of the settings in searchConfig.json. Edit them as you like to control the outcome of the seed search. For finding hard seeds, they should be set up in a way that you only need to change the start seed and end seed. In this branch, some of these settings don't even do anything, as the search will only look at the first six floors.
 
-Some settings take lists of relics, cards, or events. For these settings, either use the ID (found in the game's code and output of Seed Search) or the name in the game's currently selected language. Seed Search will warn you if an invalid name or ID is provided. For example, the following two settings for requiredEvents are both valid:
-
-` "requiredEvents": ["FaceTrader", "Beggar"],`  
-` "requiredEvents": ["Face Trader", "Old Beggar"],`
 
 ### Core search parameters
 
@@ -104,9 +118,4 @@ These options control the criteria for deciding which seeds are selected as vali
 
 When searching through seeds, many assumptions must be made about your choices and game state. When you run a seed yourself, you may notice diverging behavior, especially later on in the run. This is expected. It can be caused by a large number of factors, including spending extra gold and being low on HP. Currently, many of those assumptions can be controlled through the config file.
 
-## Current Major Restrictions
-
-- Potions are not handled at all
-- Default seed filtering is very limited. To do something complicated, you must program it yourself.
-- There is no checking to make sure that you can actually make it to Act 4.
 
