@@ -19,6 +19,7 @@ public class SeedResult {
     private ArrayList<String> bosses;
     private ArrayList<String> monsters;
     private ArrayList<String> mapPath;
+    private ArrayList<String> trueMapPath;
     private ArrayList<String> bossRelics;
     private ArrayList<String> relics;
     private int numElites;
@@ -35,6 +36,7 @@ public class SeedResult {
         this.bosses = new ArrayList<>();
         this.monsters = new ArrayList<>();
         this.mapPath = new ArrayList<>();
+        this.trueMapPath = new ArrayList<>();
         this.bossRelics = new ArrayList<>();
         this.relics = new ArrayList<>();
     }
@@ -89,6 +91,10 @@ public class SeedResult {
 
     public void addToMapPath(String mapSymbol) {
         mapPath.add(mapSymbol);
+    }
+
+    public void addToTrueMapPath(String mapSymbol) {
+        trueMapPath.add(mapSymbol);
     }
 
     public void updateRelics() {
@@ -188,10 +194,28 @@ public class SeedResult {
         System.out.println(events);
         System.out.println("Map path:");
         System.out.println(mapPath);
+        System.out.println("True map path:");
+        ArrayList<String> combinedMapPath = new ArrayList<>();
+        for (int i = 0; i < mapPath.size(); i++) {
+            String mapPathItem = mapPath.get(i);
+            String trueItem = trueMapPath.get(i);
+            if (mapPathItem.equals(trueItem)){
+                combinedMapPath.add(trueItem);
+            } else {
+                combinedMapPath.add(String.format("%s/%s", mapPathItem, trueItem));
+            }
+        }
+        System.out.println(combinedMapPath);
         System.out.println("Card choices:");
         for (Reward reward : cardRewards) {
             if (reward.cards.size() > 0) {
                 System.out.println(String.format("Floor %d: %s", reward.floor, reward.cards));
+            }
+        }
+        System.out.println("Potions:");
+        for (Reward reward : miscRewards) {
+            if (reward.potions.size() > 0) {
+                System.out.println(String.format("Floor %d: %s", reward.floor, reward.potions));
             }
         }
         System.out.println("Other cards:");

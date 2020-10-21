@@ -17,12 +17,13 @@ import com.megacrit.cardcrawl.events.city.*;
 import com.megacrit.cardcrawl.events.exordium.*;
 import com.megacrit.cardcrawl.events.shrines.*;
 import com.megacrit.cardcrawl.helpers.EventHelper;
+import com.megacrit.cardcrawl.helpers.PotionHelper;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
-import com.megacrit.cardcrawl.helpers.TipTracker;
 import com.megacrit.cardcrawl.map.MapEdge;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.neow.NeowEvent;
 import com.megacrit.cardcrawl.neow.NeowReward;
+import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.random.Random;
 import com.megacrit.cardcrawl.relics.*;
 import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
@@ -33,7 +34,6 @@ import com.megacrit.cardcrawl.shop.Merchant;
 import com.megacrit.cardcrawl.shop.ShopScreen;
 import com.megacrit.cardcrawl.shop.StorePotion;
 import com.megacrit.cardcrawl.shop.StoreRelic;
-import com.megacrit.cardcrawl.vfx.AbstractGameEffect;
 import seedsearch.patches.AbstractRoomPatch;
 import seedsearch.patches.CardRewardScreenPatch;
 import seedsearch.patches.EventHelperPatch;
@@ -50,8 +50,9 @@ import static com.megacrit.cardcrawl.helpers.MonsterHelper.*;
 
 public class SeedRunner {
 
-    public static ArrayList<AbstractRelic> combatRelics;
-    public static ArrayList<Reward> combatCardRewards;
+    public static ArrayList<AbstractRelic> combatRelics = new ArrayList<>();
+    public static ArrayList<Reward> combatCardRewards = new ArrayList<>();
+    public static ArrayList<AbstractPotion> combatPotions = new ArrayList<>();
     public static int combatGold = 0;
 
     private AbstractPlayer player;
@@ -83,6 +84,7 @@ public class SeedRunner {
         player = AbstractDungeon.player;
         AbstractDungeon.reset();
         resetCharacter();
+        clearCombatRewards();
 
         currentAct = 0;
         actFloor = 0;
@@ -171,8 +173,9 @@ public class SeedRunner {
 
     public static void clearCombatRewards() {
         combatGold = 0;
-        combatRelics = new ArrayList<>();
-        combatCardRewards = new ArrayList<>();
+        combatRelics.clear();
+        combatCardRewards.clear();
+        combatPotions.clear();
     }
 
     private ArrayList<NeowReward> getNeowRewards() {
@@ -202,6 +205,9 @@ public class SeedRunner {
             for (AbstractCard card : ShowCardAndObtainEffectPatch.obtainedCards) {
                 addInvoluntaryCardReward(card, reward);
             }
+        }
+        if (combatPotions.size() > 0) {
+            reward.addPotions(combatPotions);
         }
         if (neowOption.type == NeowReward.NeowRewardType.TRANSFORM_CARD) {
             // We're assuming we remove the first card in the deck here
@@ -265,7 +271,9 @@ public class SeedRunner {
                 }
                 for(int i = 0; i < count; i++) {
                     AbstractCard newCard = AbstractDungeon.returnTrulyRandomCard().makeCopy();
-                    addInvoluntaryCardReward(newCard, reward);
+                    if (!settings.ignorePandoraCards) {
+                        addInvoluntaryCardReward(newCard, reward);
+                    }
                 }
                 break;
             case Necronomicon.ID:
@@ -508,8 +516,10 @@ public class SeedRunner {
             if (AbstractDungeon.getCurrRoom().phase == AbstractRoom.RoomPhase.COMBAT) {
                 AbstractDungeon.getCurrRoom().phase = AbstractRoom.RoomPhase.COMPLETE;
             }
+            clearCombatRewards();
             switch(result) {
                 case EVENT:
+                    seedResult.addToTrueMapPath("?");
                     Random eventRngDuplicate = new Random(Settings.seed, AbstractDungeon.eventRng.counter);
                     AbstractEvent event = AbstractDungeon.generateEvent(eventRngDuplicate);
                     String eventKey = EventHelperPatch.eventName;
@@ -520,13 +530,21 @@ public class SeedRunner {
                     }
                     break;
                 case MONSTER:
+                    seedResult.addToTrueMapPath("M");
                     String monster = AbstractDungeon.monsterList.remove(0);
                     seedResult.registerCombat(monster);
                     seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                     int gold = AbstractDungeon.treasureRng.random(10, 20);
                     addGoldReward(gold);
+                    AbstractPotion monsterPotion = getPotionReward();
+                    if (monsterPotion != null) {
+                        Reward monsterPotionReward = new Reward(AbstractDungeon.floorNum);
+                        monsterPotionReward.addPotion(monsterPotion);
+                        seedResult.addMiscReward(monsterPotionReward);
+                    }
                     break;
                 case ELITE:
+                    seedResult.addToTrueMapPath("E");
                     String elite= AbstractDungeon.eliteMonsterList.remove(0);
                     seedResult.registerEliteCombat(elite);
                     AbstractRelic.RelicTier tier = AbstractDungeon.returnRandomRelicTier();
@@ -541,13 +559,21 @@ public class SeedRunner {
                     seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                     gold = AbstractDungeon.treasureRng.random(25, 35);
                     addGoldReward(gold);
+                    AbstractPotion elitePotion = getPotionReward();
+                    if (elitePotion != null) {
+                        Reward monsterPotionReward = new Reward(AbstractDungeon.floorNum);
+                        monsterPotionReward.addPotion(elitePotion);
+                        seedResult.addMiscReward(monsterPotionReward);
+                    }
                     break;
                 case SHOP:
+                    seedResult.addToTrueMapPath("S");
                     Merchant merchant = new Merchant();
                     Reward shopReward = getShopReward(AbstractDungeon.floorNum);
                     seedResult.addShopReward(shopReward);
                     break;
                 case TREASURE:
+                    seedResult.addToTrueMapPath("T");
                     AbstractChest chest = AbstractDungeon.getRandomChest();
                     ShowCardAndObtainEffectPatch.resetCards();
                     chest.open(false);
@@ -563,6 +589,7 @@ public class SeedRunner {
                     seedResult.addMiscReward(treasureRelicReward);
                     break;
                 case REST:
+                    seedResult.addToTrueMapPath("R");
                     if (settings.useShovel && player.hasRelic(Shovel.ID)) {
                         Reward digReward = new Reward(AbstractDungeon.floorNum);
                         AbstractRelic.RelicTier digTier = AbstractDungeon.returnRandomRelicTier();
@@ -572,6 +599,7 @@ public class SeedRunner {
             }
         }
         seedResult.addToMapPath("BOSS");
+        seedResult.addToTrueMapPath("BOSS");
     }
 
 
@@ -613,7 +641,7 @@ public class SeedRunner {
                 }
             }
             for (StorePotion potion : potions) {
-                //Potions not implemented yet in seedsearch
+                shopReward.addPotion(potion.potion);
             }
         } catch(NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
@@ -905,6 +933,23 @@ public class SeedRunner {
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
+                break;
+            case Lab.ID:
+                ArrayList<AbstractPotion> potions = new ArrayList<>();
+                potions.add(PotionHelper.getRandomPotion());
+                potions.add(PotionHelper.getRandomPotion());
+                if (AbstractDungeon.ascensionLevel < 15) {
+                    potions.add(PotionHelper.getRandomPotion());
+                }
+                reward.addPotions(potions);
+                break;
+            case WomanInBlue.ID:
+                ArrayList<AbstractPotion> womanPotions = new ArrayList<>();
+                womanPotions.add(PotionHelper.getRandomPotion());
+                womanPotions.add(PotionHelper.getRandomPotion());
+                womanPotions.add(PotionHelper.getRandomPotion());
+                reward.addPotions(womanPotions);
+                break;
         }
         if (ShowCardAndObtainEffectPatch.obtainedCards.size() > 0) {
             for (AbstractCard card : ShowCardAndObtainEffectPatch.obtainedCards) {
@@ -929,7 +974,17 @@ public class SeedRunner {
 
             Reward cardReward = new Reward(AbstractDungeon.floorNum);
             cardReward.addCards(AbstractDungeon.getRewardCards());
-            addGoldReward(AbstractDungeon.miscRng.random(-5, 5));
+            int gold = 100 + AbstractDungeon.miscRng.random(-5, 5);
+            if (AbstractDungeon.ascensionLevel >= 13) {
+                gold = (int)(gold * 0.75);
+            }
+            addGoldReward(gold);
+            AbstractPotion potion = getPotionReward();
+            if (potion != null) {
+                Reward potionReward = new Reward(AbstractDungeon.floorNum);
+                potionReward.addPotion(potion);
+                seedResult.addMiscReward(potionReward);
+            }
 
             AbstractDungeon.currMapNode.room = new TreasureRoomBoss();
             AbstractDungeon.floorNum += 1;
@@ -951,6 +1006,23 @@ public class SeedRunner {
 
             seedResult.addCardReward(cardReward);
             seedResult.addMiscReward(bossRelicReward);
+        }
+    }
+
+    private AbstractPotion getPotionReward() {
+        int chance = 40;
+        chance = chance + AbstractRoom.blizzardPotionMod;
+
+        if (AbstractDungeon.player.hasRelic(WhiteBeast.ID)) {
+            chance = 100;
+        }
+
+        if (AbstractDungeon.potionRng.random(0, 99) >= chance && !Settings.isDebug) {
+            AbstractRoom.blizzardPotionMod += 10;
+            return null;
+        } else {
+            AbstractRoom.blizzardPotionMod -= 10;
+            return AbstractDungeon.returnRandomPotion();
         }
     }
 

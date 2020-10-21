@@ -30,8 +30,13 @@ public class StartSearch {
             locator = Locator.class
     )
     public static SpireReturn Insert(CardCrawlGame _instance) {
-        LoadImagePatch.defaultTexture = ImageMaster.loadImage("images/npcs/rug/eng.png");
-        SeedSearch.search();
+        try {
+            LoadImagePatch.defaultTexture = ImageMaster.loadImage("images/npcs/rug/eng.png");
+            SeedSearch.search();
+            return SpireReturn.Return(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return SpireReturn.Return(null);
     }
 
