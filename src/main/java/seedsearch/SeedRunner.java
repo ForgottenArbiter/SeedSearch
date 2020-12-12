@@ -210,18 +210,18 @@ public class SeedRunner {
             reward.addPotions(combatPotions);
         }
         if (neowOption.type == NeowReward.NeowRewardType.TRANSFORM_CARD) {
-            // We're assuming we remove the first card in the deck here
-            AbstractCard removedCard = player.masterDeck.group.get(0);
+            // We're assuming we remove the second card in the deck here to avoid Ascender's Bane
+            AbstractCard removedCard = player.masterDeck.group.get(1);
             AbstractDungeon.transformCard(removedCard, false, NeowEvent.rng);
             player.masterDeck.removeCard(removedCard);
             addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
         }
         if (neowOption.type == NeowReward.NeowRewardType.TRANSFORM_TWO_CARDS) {
-            AbstractCard removedCard = player.masterDeck.group.get(0);
+            AbstractCard removedCard = player.masterDeck.group.get(1);
             AbstractDungeon.transformCard(removedCard, false, NeowEvent.rng);
             player.masterDeck.removeCard(removedCard);
             addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
-            removedCard = player.masterDeck.group.get(0);
+            removedCard = player.masterDeck.group.get(1);
             AbstractDungeon.transformCard(removedCard, false, NeowEvent.rng);
             player.masterDeck.removeCard(removedCard);
             addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
