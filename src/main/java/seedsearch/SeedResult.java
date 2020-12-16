@@ -167,9 +167,9 @@ public class SeedResult {
                 allCards.add(card.cardID);
             }
         }
-        for (AbstractCard card : AbstractDungeon.player.masterDeck.group) {
-            allCards.add(card.cardID);
-        }
+        //for (AbstractCard card : AbstractDungeon.player.masterDeck.group) {
+        //    allCards.add(card.cardID);
+        //}
         return allCards;
     }
 

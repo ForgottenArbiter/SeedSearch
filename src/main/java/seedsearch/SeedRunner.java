@@ -1077,7 +1077,7 @@ public class SeedRunner {
 
     private void addInvoluntaryCardReward(AbstractCard card, Reward reward) {
         reward.cards.add(card);
-        //AbstractDungeon.player.masterDeck.addToBottom(card);
+        AbstractDungeon.player.masterDeck.addToBottom(card);
     }
 
     private void loseRelic(String relicID) {
