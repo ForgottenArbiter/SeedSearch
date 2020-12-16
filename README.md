@@ -29,7 +29,7 @@ Some settings take lists of relics, cards, or events. For these settings, either
 * **endSeed**: The last seed to search
 * **verbose**: Whether to print out detailed information about each seed found
 * **exitAfterSearch** Set to true to cause the program to immediately exit after search every seed
-* **highestFllor** How many floors into the seed you want to search
+* **highestFloor** How many floors into the seed you want to search
 
 ### Navigation
 
