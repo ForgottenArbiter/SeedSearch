@@ -134,8 +134,16 @@ public class SeedResult {
             return false;
         }
         ArrayList<String> allCards = getAllCardIds();
-        if (!allCards.containsAll(settings.requiredAct1Cards)) {
-            return false;
+        for(String card : settings.requiredAct1Cards)
+        {
+            if (allCards.contains(card))
+            {
+                allCards.remove(card);
+            }
+            else
+            {
+                return false;
+            }
         }
         return true;
     }

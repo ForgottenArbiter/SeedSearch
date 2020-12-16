@@ -25,6 +25,7 @@ public class SearchSettings {
     public long endSeed = 100L;
     public boolean verbose = true;
     public boolean exitAfterSearch = false;
+    public int highestFloor = 55;
 
     // Navigation
 
