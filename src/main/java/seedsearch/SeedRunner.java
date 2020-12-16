@@ -283,6 +283,20 @@ public class SeedRunner {
                     }
                 }
                 break;
+            case Astrolabe.ID:
+                AbstractCard removedCard = player.masterDeck.group.get(1);
+                AbstractDungeon.transformCard(removedCard, true, AbstractDungeon.miscRng);
+                player.masterDeck.removeCard(removedCard);
+                addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
+                removedCard = player.masterDeck.group.get(1);
+                AbstractDungeon.transformCard(removedCard, true, AbstractDungeon.miscRng);
+                player.masterDeck.removeCard(removedCard);
+                addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
+                removedCard = player.masterDeck.group.get(1);
+                AbstractDungeon.transformCard(removedCard, true, AbstractDungeon.miscRng);
+                player.masterDeck.removeCard(removedCard);
+                addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
+                break;
             case Necronomicon.ID:
                 AbstractCard curse = new Necronomicurse();
                 addInvoluntaryCardReward(curse, reward);
