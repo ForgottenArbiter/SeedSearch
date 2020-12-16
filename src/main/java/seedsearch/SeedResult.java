@@ -134,6 +134,13 @@ public class SeedResult {
             return false;
         }
         ArrayList<String> allCards = getAllCardIds();
+        for(String card : settings.bannedAct1Cards)
+        {
+            if (allCards.contains(card))
+            {
+                return false;
+            }
+        }
         for(String card : settings.requiredAct1Cards)
         {
             if (allCards.contains(card))

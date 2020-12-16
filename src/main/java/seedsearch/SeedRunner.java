@@ -39,6 +39,7 @@ import seedsearch.patches.CardRewardScreenPatch;
 import seedsearch.patches.EventHelperPatch;
 import seedsearch.patches.ShowCardAndObtainEffectPatch;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -263,11 +264,17 @@ public class SeedRunner {
                 break;
             case PandorasBox.ID:
                 int count = 0;
+                ArrayList<AbstractCard> strikesAndDefends = new ArrayList<>();
                 for(AbstractCard card : player.masterDeck.group) {
                     if ((card.cardID.equals("Strike_R")) || (card.cardID.equals("Strike_G")) || (card.cardID.equals("Strike_B")) || (card.cardID.equals("Strike_P")) ||
                             (card.cardID.equals("Defend_R")) || (card.cardID.equals("Defend_G")) || (card.cardID.equals("Defend_B")) || (card.cardID.equals("Defend_P"))) {
                         count += 1;
+                        strikesAndDefends.add(card);
                     }
+                }
+                for (AbstractCard card : strikesAndDefends)
+                {
+                    player.masterDeck.group.remove(card);
                 }
                 for(int i = 0; i < count; i++) {
                     AbstractCard newCard = AbstractDungeon.returnTrulyRandomCard().makeCopy();

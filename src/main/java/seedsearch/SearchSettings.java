@@ -83,6 +83,7 @@ public class SearchSettings {
     // Result filters
 
     public ArrayList<String> requiredAct1Cards = new ArrayList<>();
+    public ArrayList<String> bannedAct1Cards = new ArrayList<>();
     public ArrayList<String> requiredAct1Relics = new ArrayList<>();
     public ArrayList<String> requiredRelics = new ArrayList<>();
     public ArrayList<String> requiredEvents = new ArrayList<>();
@@ -145,6 +146,7 @@ public class SearchSettings {
         ArrayList<ArrayList<String>> cardLists = new ArrayList<>();
         cardLists.add(cardsToBuy);
         cardLists.add(requiredAct1Cards);
+        cardLists.add(bannedAct1Cards);
 
         ArrayList<ArrayList<String>> eventLists = new ArrayList<>();
         eventLists.add(requiredEvents);
