@@ -10,7 +10,9 @@ Note: Because it runs a headless version of Slay the Spire and has no access to 
 
 ## Setup and Usage
 
-Run the mod once to search the first 100 seeds with some default settings. On the current patch of the game (v2.0), you should find one seed (54). A file called "searchConfig.json" should have been created in your current working directory. Edit that file to control the behavior of future searches. Note that the game will not launch. All output will be printed to the program's stdout.
+To install the mod, download seedsearch.jar from the [Releases](https://github.com/ForgottenArbiter/SeedSearch/releases) page, or compile it yourself. Create a folder named "mods" in your Slay the Spire installation directory if it does not yet exist, and put seedsearch.jar in that folder. When you run the mod launcher, SeedSearch should now show up.
+
+Run the mod once to search the first 100 seeds with some default settings. On the current patch of the game (v2.2), you should find one seed (54). A file called "searchConfig.json" should have been created in your current working directory. Edit that file to control the behavior of future searches. Note that the game will not launch. All output will be printed to the program's stdout.
 
 ## Settings
 
@@ -110,7 +112,7 @@ When searching through seeds, many assumptions must be made about your choices a
 
 ## Current Major Restrictions
 
-- Potions are not handled at all
+- Potions have some basic support now, but it is incomplete.
 - Default seed filtering is very limited. To do something complicated, you must program it yourself.
 - There is no checking to make sure that you can actually make it to Act 4.
 
