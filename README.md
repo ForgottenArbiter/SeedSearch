@@ -24,11 +24,12 @@ Some settings take lists of relics, cards, or events. For these settings, either
 ### Core search parameters
 
 * **ascensionLevel**: The ascension level used for the search (0 to 20)
-* **playerClass**: The class used to search (IRONCLAD, THE_SILENT, or DEFECT)
+* **playerClass**: The class used to search (IRONCLAD, THE_SILENT, DEFECT, or WATCHER)
 * **startSeed**: The first seed to search
 * **endSeed**: The last seed to search
 * **verbose**: Whether to print out detailed information about each seed found
 * **exitAfterSearch** Set to true to cause the program to immediately exit after search every seed
+* **highestFloor** How many floors into the seed you want to search
 
 ### Navigation
 
@@ -91,6 +92,7 @@ All of these control which actions are taken at various events in the game.
 These options control the criteria for deciding which seeds are selected as valid results.
 
 * **requiredAct1Cards**: The cards which must be present somewhere in Act 1
+* **bannedAct1Cards**: The cards which must not be present somewhere in Act 1
 * **requiredAct1Relics**: The relics which must be acquired somewhere in Act 1
 * **requiredRelics**: The relics which must be acquired anywhere in the run
 * **requiredEvents**: The events which must be encountered somewhere in the run

@@ -39,6 +39,7 @@ import seedsearch.patches.CardRewardScreenPatch;
 import seedsearch.patches.EventHelperPatch;
 import seedsearch.patches.ShowCardAndObtainEffectPatch;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -263,11 +264,17 @@ public class SeedRunner {
                 break;
             case PandorasBox.ID:
                 int count = 0;
+                ArrayList<AbstractCard> strikesAndDefends = new ArrayList<>();
                 for(AbstractCard card : player.masterDeck.group) {
-                    if ((card.cardID.equals("Strike_R")) || (card.cardID.equals("Strike_G")) || (card.cardID.equals("Strike_B")) ||
-                            (card.cardID.equals("Defend_R")) || (card.cardID.equals("Defend_G")) || (card.cardID.equals("Defend_B"))) {
+                    if ((card.cardID.equals("Strike_R")) || (card.cardID.equals("Strike_G")) || (card.cardID.equals("Strike_B")) || (card.cardID.equals("Strike_P")) ||
+                            (card.cardID.equals("Defend_R")) || (card.cardID.equals("Defend_G")) || (card.cardID.equals("Defend_B")) || (card.cardID.equals("Defend_P"))) {
                         count += 1;
+                        strikesAndDefends.add(card);
                     }
+                }
+                for (AbstractCard card : strikesAndDefends)
+                {
+                    player.masterDeck.group.remove(card);
                 }
                 for(int i = 0; i < count; i++) {
                     AbstractCard newCard = AbstractDungeon.returnTrulyRandomCard().makeCopy();
@@ -275,6 +282,20 @@ public class SeedRunner {
                         addInvoluntaryCardReward(newCard, reward);
                     }
                 }
+                break;
+            case Astrolabe.ID:
+                AbstractCard removedCard = player.masterDeck.group.get(1);
+                AbstractDungeon.transformCard(removedCard, true, AbstractDungeon.miscRng);
+                player.masterDeck.removeCard(removedCard);
+                addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
+                removedCard = player.masterDeck.group.get(1);
+                AbstractDungeon.transformCard(removedCard, true, AbstractDungeon.miscRng);
+                player.masterDeck.removeCard(removedCard);
+                addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
+                removedCard = player.masterDeck.group.get(1);
+                AbstractDungeon.transformCard(removedCard, true, AbstractDungeon.miscRng);
+                player.masterDeck.removeCard(removedCard);
+                addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
                 break;
             case Necronomicon.ID:
                 AbstractCard curse = new Necronomicurse();
@@ -469,6 +490,10 @@ public class SeedRunner {
     private void runPath(ArrayList<MapRoomNode> path) {
         for(actFloor = 0; actFloor < path.size(); actFloor++) {
             AbstractDungeon.floorNum += 1;
+            if (AbstractDungeon.floorNum > settings.highestFloor)
+            {
+                return;
+            }
             AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
             MapRoomNode node = path.get(actFloor);
             RoomType result;
@@ -960,14 +985,22 @@ public class SeedRunner {
     }
 
     private void getBossRewards() {
-        seedResult.registerBossCombat(AbstractDungeon.bossKey);
         AbstractDungeon.floorNum += 1;
+        if (AbstractDungeon.floorNum > settings.highestFloor)
+        {
+            return;
+        }
+        seedResult.registerBossCombat(AbstractDungeon.bossKey);
         AbstractDungeon.currMapNode = new MapRoomNode(-1, 15);
         AbstractDungeon.currMapNode.room = new MonsterRoomBoss();
         AbstractDungeon.currMapNode.room.phase = AbstractRoom.RoomPhase.COMPLETE;
         if (AbstractDungeon.ascensionLevel == 20 && currentAct == 2) {
             seedResult.registerBossCombat(AbstractDungeon.bossList.get(1));
             AbstractDungeon.floorNum += 1;
+            if (AbstractDungeon.floorNum > settings.highestFloor)
+            {
+                return;
+            }
         }
         if (currentAct < 2) {
             AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
@@ -988,6 +1021,10 @@ public class SeedRunner {
 
             AbstractDungeon.currMapNode.room = new TreasureRoomBoss();
             AbstractDungeon.floorNum += 1;
+            if (AbstractDungeon.floorNum > settings.highestFloor)
+            {
+                return;
+            }
             AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
 
             BossChest bossChest = new BossChest();
