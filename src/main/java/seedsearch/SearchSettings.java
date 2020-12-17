@@ -46,6 +46,8 @@ public class SearchSettings {
     public boolean speedrunPace = true; // Do you reach Act 3 fast enough to skip Secret Portal?
     public boolean act4 = false;
     public boolean alwaysSpawnBottledTornado = true; // Assume you always have a power for Bottled Tornado to spawn
+    public boolean alwaysSpawnBottledLightning = true; // Assume you always have a non-basic skill for Bottled Lightning to spawn
+    public boolean alwaysSpawnBottledFlame = true; // Assume you always have a non-basic attack for Bottled Flame to spawn
     public boolean ignorePandoraCards = false; // Don't add the cards from Pandora's Box (as if you glitch it)
 
     // Event decisions

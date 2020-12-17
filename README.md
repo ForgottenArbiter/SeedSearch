@@ -52,6 +52,8 @@ These room weights are used to determine which path is taken through each map. T
 * **speedrunPace**: If set to true, then the secret portal event will not spawn.
 * **act4**: If set to true, then the runs will include Act 4. Note that there is no check to ensure that Act 4 can be unlocked with the selected path.
 * **alwaysSpawnBottledTornado**: If set to true, then the player is assumed to always have a power in their deck to make Bottled Tornado spawn.
+* **alwaysSpawnBottledLightning**: Same as above, but for non-basic skills
+* **alwaysSpawnBottledFlame**: Same as above, but for non-basic attacks
 
 ### Event decisions
 
