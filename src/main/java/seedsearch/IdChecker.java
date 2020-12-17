@@ -117,7 +117,7 @@ public class IdChecker {
 
     private static ArrayList<String> findBadIds(HashMap<String, String> map, ArrayList<String> ids) {
         ArrayList<String> mistakes = new ArrayList<>();
-        for (int i = 0 ; i < ids.size(); i++) {
+        for (int i = 0; i < ids.size(); i++) {
             String id = ids.get(i);
             if (!map.containsValue(id)) {
                 if (!map.containsKey(id)) {

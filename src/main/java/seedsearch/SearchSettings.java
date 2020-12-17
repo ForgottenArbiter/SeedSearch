@@ -45,7 +45,7 @@ public class SearchSettings {
     public boolean useShovel = false;
     public boolean speedrunPace = true; // Do you reach Act 3 fast enough to skip Secret Portal?
     public boolean act4 = false;
-    public boolean alwaysSpawnBottledTornado = true; //Assume you always have a power for Bottled Tornado to spawn
+    public boolean alwaysSpawnBottledTornado = true; // Assume you always have a power for Bottled Tornado to spawn
     public boolean ignorePandoraCards = false; // Don't add the cards from Pandora's Box (as if you glitch it)
 
     // Event decisions
@@ -93,7 +93,7 @@ public class SearchSettings {
     public int minimumCombats = 0;
     public int maximumCombats = 33;
 
-    public SearchSettings () {
+    public SearchSettings() {
     }
 
     private void setDefaults() {
@@ -102,7 +102,7 @@ public class SearchSettings {
         requiredAct1Cards.add(BodySlam.ID);
     }
 
-    public static SearchSettings loadSettings () {
+    public static SearchSettings loadSettings() {
         try {
             File file = new File(configName);
             if (file.exists()) {
@@ -123,7 +123,7 @@ public class SearchSettings {
         }
     }
 
-    private void saveSettings () {
+    private void saveSettings() {
         try {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(configName);

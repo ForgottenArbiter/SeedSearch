@@ -39,7 +39,6 @@ import seedsearch.patches.CardRewardScreenPatch;
 import seedsearch.patches.EventHelperPatch;
 import seedsearch.patches.ShowCardAndObtainEffectPatch;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -245,7 +244,7 @@ public class SeedRunner {
     private void doRelicPickupLogic(AbstractRelic relic, Reward reward) {
         this.player.relics.add(relic);
         String relicKey = relic.relicId;
-        switch(relicKey) {
+        switch (relicKey) {
             case TinyHouse.ID:
                 seedResult.addCardReward(reward.floor, AbstractDungeon.getRewardCards());
                 addGoldReward(50);
@@ -265,18 +264,19 @@ public class SeedRunner {
             case PandorasBox.ID:
                 int count = 0;
                 ArrayList<AbstractCard> strikesAndDefends = new ArrayList<>();
-                for(AbstractCard card : player.masterDeck.group) {
-                    if ((card.cardID.equals("Strike_R")) || (card.cardID.equals("Strike_G")) || (card.cardID.equals("Strike_B")) || (card.cardID.equals("Strike_P")) ||
-                            (card.cardID.equals("Defend_R")) || (card.cardID.equals("Defend_G")) || (card.cardID.equals("Defend_B")) || (card.cardID.equals("Defend_P"))) {
+                for (AbstractCard card : player.masterDeck.group) {
+                    if ((card.cardID.equals("Strike_R")) || (card.cardID.equals("Strike_G")) ||
+                            (card.cardID.equals("Strike_B")) || (card.cardID.equals("Strike_P")) ||
+                            (card.cardID.equals("Defend_R")) || (card.cardID.equals("Defend_G")) ||
+                            (card.cardID.equals("Defend_B")) || (card.cardID.equals("Defend_P"))) {
                         count += 1;
                         strikesAndDefends.add(card);
                     }
                 }
-                for (AbstractCard card : strikesAndDefends)
-                {
+                for (AbstractCard card : strikesAndDefends) {
                     player.masterDeck.group.remove(card);
                 }
-                for(int i = 0; i < count; i++) {
+                for (int i = 0; i < count; i++) {
                     AbstractCard newCard = AbstractDungeon.returnTrulyRandomCard().makeCopy();
                     if (!settings.ignorePandoraCards) {
                         addInvoluntaryCardReward(newCard, reward);
@@ -310,10 +310,10 @@ public class SeedRunner {
         float[][] weights = new float[15][7];
         float[][][] pathWeights = new float[15][7][4];
         ArrayList<ArrayList<ArrayList<MapRoomNode>>> parents = new ArrayList<>();
-        for(int i = 0; i < 15; i++) {
-            for(int j = 0; j < 7; j++) {
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 7; j++) {
                 weights[i][j] = getRoomScore(map.get(i).get(j).room);
-                for(int k = 0; k < 4; k++) {
+                for (int k = 0; k < 4; k++) {
                     if (i == 0) {
                         pathWeights[i][j][k] = weights[i][j];
                     } else {
@@ -322,18 +322,18 @@ public class SeedRunner {
                 }
             }
         }
-        for(int floor = 0; floor < 14; floor++) {
+        for (int floor = 0; floor < 14; floor++) {
             ArrayList<ArrayList<MapRoomNode>> floorParents = new ArrayList<>(4);
-            for(int i = 0; i < 4; i++) {
+            for (int i = 0; i < 4; i++) {
                 ArrayList<MapRoomNode> floorSubList = new ArrayList<>(7);
-                for(int j = 0; j < 7; j++) {
+                for (int j = 0; j < 7; j++) {
                     floorSubList.add(null);
                 }
                 floorParents.add(floorSubList);
             }
-            for(int x = 0; x < 7; x++) {
+            for (int x = 0; x < 7; x++) {
                 MapRoomNode node = map.get(floor).get(x);
-                if(node.room == null) {
+                if (node.room == null) {
                     continue;
                 }
                 ArrayList<MapEdge> edges = node.getEdges();
@@ -342,18 +342,18 @@ public class SeedRunner {
                     int targetX = edge.dstX;
                     nextXs.add(targetX);
                 }
-                for(int nx = 0; nx < 7; nx++) {
-                    for(int wing_uses = 0; wing_uses <= bootsCharges ; wing_uses++) {
+                for (int nx = 0; nx < 7; nx++) {
+                    for (int wing_uses = 0; wing_uses <= bootsCharges; wing_uses++) {
                         if (nextXs.contains(nx)) {
-                            float testWeight = weights[floor+1][nx] + pathWeights[floor][x][wing_uses];
-                            if(testWeight < pathWeights[floor+1][nx][wing_uses]) {
-                                pathWeights[floor+1][nx][wing_uses] = testWeight;
+                            float testWeight = weights[floor + 1][nx] + pathWeights[floor][x][wing_uses];
+                            if (testWeight < pathWeights[floor + 1][nx][wing_uses]) {
+                                pathWeights[floor + 1][nx][wing_uses] = testWeight;
                                 floorParents.get(wing_uses).set(nx, node);
                             }
                         } else if (wing_uses > 0) {
-                            float testWeight = weights[floor+1][nx] + pathWeights[floor][x][wing_uses-1];
-                            if(testWeight < pathWeights[floor+1][nx][wing_uses]) {
-                                pathWeights[floor+1][nx][wing_uses] = testWeight;
+                            float testWeight = weights[floor + 1][nx] + pathWeights[floor][x][wing_uses - 1];
+                            if (testWeight < pathWeights[floor + 1][nx][wing_uses]) {
+                                pathWeights[floor + 1][nx][wing_uses] = testWeight;
                                 floorParents.get(wing_uses).set(nx, node);
                             }
                         }
@@ -362,9 +362,9 @@ public class SeedRunner {
             }
             parents.add(floorParents);
         }
-        int[] best_top = {0,0,0,0};
+        int[] best_top = {0, 0, 0, 0};
         float[] best_score = {100000f, 100000f, 100000f, 100000f};
-        for(int uses = 0; uses < 4; uses++) {
+        for (int uses = 0; uses < 4; uses++) {
             for (int x = 0; x < 7; x++) {
                 if (pathWeights[14][x][uses] < best_score[uses]) {
                     best_score[uses] = pathWeights[14][x][uses];
@@ -373,73 +373,73 @@ public class SeedRunner {
             }
         }
         int best_uses = 0;
-        if(best_score[0] - best_score[1] >= settings.wingBootsThreshold) {
+        if (best_score[0] - best_score[1] >= settings.wingBootsThreshold) {
             best_uses = 1;
         }
-        if(best_score[1] - best_score[2] >= settings.wingBootsThreshold) {
+        if (best_score[1] - best_score[2] >= settings.wingBootsThreshold) {
             best_uses = 2;
         }
-        if(best_score[2] - best_score[3] >= settings.wingBootsThreshold) {
+        if (best_score[2] - best_score[3] >= settings.wingBootsThreshold) {
             best_uses = 3;
         }
         int cur_uses = best_uses;
         ArrayList<MapRoomNode> path = new ArrayList<>(15);
         int next_x = best_top[cur_uses];
         path.add(map.get(14).get(best_top[cur_uses]));
-        for(int y = 14; y > 0; y--) {
-            MapRoomNode parent = parents.get(y-1).get(cur_uses).get(next_x);
+        for (int y = 14; y > 0; y--) {
+            MapRoomNode parent = parents.get(y - 1).get(cur_uses).get(next_x);
             boolean isConnected = false;
-            for(MapEdge edge : parent.getEdges()) {
-                if(edge.dstX == next_x) {
+            for (MapEdge edge : parent.getEdges()) {
+                if (edge.dstX == next_x) {
                     isConnected = true;
                     break;
                 }
             }
-            if(!isConnected) {
+            if (!isConnected) {
                 cur_uses -= 1;
             }
             path.add(0, parent);
             next_x = parent.x;
         }
-        if(best_uses != 0) {
+        if (best_uses != 0) {
             this.bootsCharges -= best_uses;
         }
         return path;
     }
 
     private ArrayList<MapRoomNode> findMapPath(ArrayList<ArrayList<MapRoomNode>> map) {
-        if(bootsCharges > 0) {
+        if (bootsCharges > 0) {
             return findBootsPath(map);
         }
         float[][] weights = new float[15][7];
         float[][] pathWeights = new float[15][7];
         ArrayList<ArrayList<MapRoomNode>> parents = new ArrayList<>();
-        for(int i = 0; i < 15; i++) {
-            for(int j = 0; j < 7; j++) {
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 7; j++) {
                 weights[i][j] = getRoomScore(map.get(i).get(j).room);
-                if(i == 0) {
+                if (i == 0) {
                     pathWeights[i][j] = weights[i][j];
                 } else {
                     pathWeights[i][j] = 100000f;
                 }
             }
         }
-        for(int floor = 0; floor < 14; floor++) {
+        for (int floor = 0; floor < 14; floor++) {
             ArrayList<MapRoomNode> floorParents = new ArrayList<>(7);
-            for(int i = 0; i < 7; i++) {
+            for (int i = 0; i < 7; i++) {
                 floorParents.add(null);
             }
-            for(int x = 0; x < 7; x++) {
+            for (int x = 0; x < 7; x++) {
                 MapRoomNode node = map.get(floor).get(x);
-                if(node.room == null) {
+                if (node.room == null) {
                     continue;
                 }
                 ArrayList<MapEdge> edges = node.getEdges();
                 for (MapEdge edge : edges) {
                     int targetX = edge.dstX;
-                    float testWeight = weights[floor+1][targetX] + pathWeights[floor][x];
-                    if (testWeight < pathWeights[floor+1][targetX]) {
-                        pathWeights[floor+1][targetX] = testWeight;
+                    float testWeight = weights[floor + 1][targetX] + pathWeights[floor][x];
+                    if (testWeight < pathWeights[floor + 1][targetX]) {
+                        pathWeights[floor + 1][targetX] = testWeight;
                         floorParents.set(targetX, node);
                     }
                 }
@@ -448,8 +448,8 @@ public class SeedRunner {
         }
         int best_top = 0;
         float best_score = 100000f;
-        for(int x = 0; x < 7; x++) {
-            if(pathWeights[14][x] < best_score) {
+        for (int x = 0; x < 7; x++) {
+            if (pathWeights[14][x] < best_score) {
                 best_score = pathWeights[14][x];
                 best_top = x;
             }
@@ -457,8 +457,8 @@ public class SeedRunner {
         ArrayList<MapRoomNode> path = new ArrayList<MapRoomNode>(15);
         int next_x = best_top;
         path.add(map.get(14).get(best_top));
-        for(int y = 14; y > 0; y--) {
-            MapRoomNode parent = parents.get(y-1).get(next_x);
+        for (int y = 14; y > 0; y--) {
+            MapRoomNode parent = parents.get(y - 1).get(next_x);
             path.add(0, parent);
             next_x = parent.x;
         }
@@ -488,35 +488,34 @@ public class SeedRunner {
     }
 
     private void runPath(ArrayList<MapRoomNode> path) {
-        for(actFloor = 0; actFloor < path.size(); actFloor++) {
+        for (actFloor = 0; actFloor < path.size(); actFloor++) {
             AbstractDungeon.floorNum += 1;
-            if (AbstractDungeon.floorNum > settings.highestFloor)
-            {
+            if (AbstractDungeon.floorNum > settings.highestFloor) {
                 return;
             }
-            AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
+            AbstractDungeon.miscRng = new Random(currentSeed + (long) AbstractDungeon.floorNum);
             MapRoomNode node = path.get(actFloor);
             RoomType result;
-            if(node.room instanceof EventRoom) {
+            if (node.room instanceof EventRoom) {
                 result = RoomType.EVENT;
                 seedResult.addToMapPath("?");
-            } else if(node.room instanceof MonsterRoomElite) {
+            } else if (node.room instanceof MonsterRoomElite) {
                 result = RoomType.ELITE;
                 seedResult.addToMapPath("E");
-            } else if(node.room instanceof MonsterRoom) {
+            } else if (node.room instanceof MonsterRoom) {
                 result = RoomType.MONSTER;
                 seedResult.addToMapPath("M");
-            } else if(node.room instanceof ShopRoom) {
+            } else if (node.room instanceof ShopRoom) {
                 result = RoomType.SHOP;
                 seedResult.addToMapPath("S");
-            } else if(node.room instanceof TreasureRoom) {
+            } else if (node.room instanceof TreasureRoom) {
                 result = RoomType.TREASURE;
                 seedResult.addToMapPath("T");
             } else {
                 result = RoomType.REST;
                 seedResult.addToMapPath("R");
             }
-            if(result == RoomType.EVENT) {
+            if (result == RoomType.EVENT) {
                 EventHelper.RoomResult eventRoll = EventHelper.roll();
                 switch (eventRoll) {
                     case ELITE:
@@ -542,7 +541,7 @@ public class SeedRunner {
                 AbstractDungeon.getCurrRoom().phase = AbstractRoom.RoomPhase.COMPLETE;
             }
             clearCombatRewards();
-            switch(result) {
+            switch (result) {
                 case EVENT:
                     seedResult.addToTrueMapPath("?");
                     Random eventRngDuplicate = new Random(Settings.seed, AbstractDungeon.eventRng.counter);
@@ -570,13 +569,13 @@ public class SeedRunner {
                     break;
                 case ELITE:
                     seedResult.addToTrueMapPath("E");
-                    String elite= AbstractDungeon.eliteMonsterList.remove(0);
+                    String elite = AbstractDungeon.eliteMonsterList.remove(0);
                     seedResult.registerEliteCombat(elite);
                     AbstractRelic.RelicTier tier = AbstractDungeon.returnRandomRelicTier();
                     String relic = AbstractDungeon.returnRandomRelicKey(tier);
                     Reward relicReward = new Reward(AbstractDungeon.floorNum);
                     awardRelic(relic, relicReward);
-                    if(player.hasRelic(BlackStar.ID)) {
+                    if (player.hasRelic(BlackStar.ID)) {
                         AbstractRelic starRelic = AbstractDungeon.returnRandomNonCampfireRelic(tier);
                         awardRelic(starRelic, relicReward);
                     }
@@ -604,7 +603,7 @@ public class SeedRunner {
                     chest.open(false);
                     addGoldReward(combatGold);
                     Reward treasureRelicReward = new Reward(AbstractDungeon.floorNum);
-                    for(AbstractRelic treasureRelic : combatRelics) {
+                    for (AbstractRelic treasureRelic : combatRelics) {
                         awardRelic(treasureRelic, treasureRelicReward);
                     }
                     for (AbstractCard card : ShowCardAndObtainEffectPatch.obtainedCards) {
@@ -668,7 +667,7 @@ public class SeedRunner {
             for (StorePotion potion : potions) {
                 shopReward.addPotion(potion.potion);
             }
-        } catch(NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
         return shopReward;
@@ -679,19 +678,19 @@ public class SeedRunner {
         ShowCardAndObtainEffectPatch.resetCards();
         Random miscRng = AbstractDungeon.miscRng;
         Reward reward = new Reward(floor);
-        switch(eventKey) {
+        switch (eventKey) {
             case GoopPuddle.ID:
                 addGoldReward(75);
                 break;
             case Sssserpent.ID:
-                if(settings.takeSerpentGold) {
-                    int goldgain = AbstractDungeon.ascensionLevel >=15 ? 150 : 175;
+                if (settings.takeSerpentGold) {
+                    int goldgain = AbstractDungeon.ascensionLevel >= 15 ? 150 : 175;
                     addGoldReward(goldgain);
                     addInvoluntaryCardReward(new Doubt(), reward);
                 }
                 break;
             case AccursedBlacksmith.ID:
-                if(settings.takeWarpedTongs) {
+                if (settings.takeWarpedTongs) {
                     reward.addRelic(WarpedTongs.ID);
                     addInvoluntaryCardReward(new Pain(), reward);
                 }
@@ -705,15 +704,15 @@ public class SeedRunner {
                 break;
             case DeadAdventurer.ID:
                 if (settings.takeDeadAdventurerFight) {
-                    DeadAdventurer deadAdventurer = (DeadAdventurer)event;
+                    DeadAdventurer deadAdventurer = (DeadAdventurer) event;
 
                     try {
                         Method getMonster = DeadAdventurer.class.getDeclaredMethod("getMonster");
                         getMonster.setAccessible(true);
-                        String monster = (String)getMonster.invoke(deadAdventurer);
+                        String monster = (String) getMonster.invoke(deadAdventurer);
 
                         int encounterChance = AbstractDungeon.ascensionLevel >= 15 ? 35 : 25;
-                        for(int i = 1; i <= 3; i++) {
+                        for (int i = 1; i <= 3; i++) {
                             if (miscRng.random(0, 99) < encounterChance) {
                                 addGoldReward(miscRng.random(25, 35));
                                 seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
@@ -763,7 +762,7 @@ public class SeedRunner {
                 }
                 break;
             case TombRedMask.ID:
-                if(!player.hasRelic(RedMask.ID) && settings.takeRedMaskAct3) {
+                if (!player.hasRelic(RedMask.ID) && settings.takeRedMaskAct3) {
                     awardRelic(RedMask.ID, reward);
                     addGoldReward(-player.gold);
                 } else {
@@ -771,7 +770,7 @@ public class SeedRunner {
                 }
                 break;
             case Mushrooms.ID:
-                if(settings.takeMushroomFight) {
+                if (settings.takeMushroomFight) {
                     seedResult.registerCombat(MUSHROOMS_EVENT_ENC);
                     addGoldReward(miscRng.random(25, 35));
                     awardRelic(OddMushroom.ID, reward);
@@ -799,13 +798,13 @@ public class SeedRunner {
                 }
                 break;
             case ForgottenAltar.ID:
-                if(player.hasRelic(GoldenIdol.ID) && settings.tradeGoldenIdolForBloody) {
+                if (player.hasRelic(GoldenIdol.ID) && settings.tradeGoldenIdolForBloody) {
                     awardRelic(BloodyIdol.ID, reward);
                     loseRelic(GoldenIdol.ID);
                 }
                 break;
             case Bonfire.ID:
-                if(player.isCursed()) {
+                if (player.isCursed()) {
                     awardRelic(SpiritPoop.ID, reward);
                 }
                 break;
@@ -923,7 +922,7 @@ public class SeedRunner {
                 if (settings.takeWindingHallsCurse) {
                     addInvoluntaryCardReward(new Writhe(), reward);
                 } else if (settings.takeWindingHallsMadness) {
-                    for(int i = 0; i < 2; i++) {
+                    for (int i = 0; i < 2; i++) {
                         addInvoluntaryCardReward(new Madness(), reward);
                     }
                 }
@@ -932,7 +931,7 @@ public class SeedRunner {
                 try {
                     Field eventCards = GremlinMatchGame.class.getDeclaredField("cards");
                     eventCards.setAccessible(true);
-                    CardGroup gremlinCards = (CardGroup)eventCards.get(event);
+                    CardGroup gremlinCards = (CardGroup) eventCards.get(event);
                     reward.addCards(gremlinCards.group);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     e.printStackTrace();
@@ -986,8 +985,7 @@ public class SeedRunner {
 
     private void getBossRewards() {
         AbstractDungeon.floorNum += 1;
-        if (AbstractDungeon.floorNum > settings.highestFloor)
-        {
+        if (AbstractDungeon.floorNum > settings.highestFloor) {
             return;
         }
         seedResult.registerBossCombat(AbstractDungeon.bossKey);
@@ -997,19 +995,18 @@ public class SeedRunner {
         if (AbstractDungeon.ascensionLevel == 20 && currentAct == 2) {
             seedResult.registerBossCombat(AbstractDungeon.bossList.get(1));
             AbstractDungeon.floorNum += 1;
-            if (AbstractDungeon.floorNum > settings.highestFloor)
-            {
+            if (AbstractDungeon.floorNum > settings.highestFloor) {
                 return;
             }
         }
         if (currentAct < 2) {
-            AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
+            AbstractDungeon.miscRng = new Random(currentSeed + (long) AbstractDungeon.floorNum);
 
             Reward cardReward = new Reward(AbstractDungeon.floorNum);
             cardReward.addCards(AbstractDungeon.getRewardCards());
             int gold = 100 + AbstractDungeon.miscRng.random(-5, 5);
             if (AbstractDungeon.ascensionLevel >= 13) {
-                gold = (int)(gold * 0.75);
+                gold = (int) (gold * 0.75);
             }
             addGoldReward(gold);
             AbstractPotion potion = getPotionReward();
@@ -1021,11 +1018,10 @@ public class SeedRunner {
 
             AbstractDungeon.currMapNode.room = new TreasureRoomBoss();
             AbstractDungeon.floorNum += 1;
-            if (AbstractDungeon.floorNum > settings.highestFloor)
-            {
+            if (AbstractDungeon.floorNum > settings.highestFloor) {
                 return;
             }
-            AbstractDungeon.miscRng = new Random(currentSeed + (long)AbstractDungeon.floorNum);
+            AbstractDungeon.miscRng = new Random(currentSeed + (long) AbstractDungeon.floorNum);
 
             BossChest bossChest = new BossChest();
             ArrayList<String> bossRelicStrings = new ArrayList<>();

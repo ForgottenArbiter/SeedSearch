@@ -14,10 +14,10 @@ public class SeedSearch {
         settings = SearchSettings.loadSettings();
         SeedRunner runner = new SeedRunner(settings);
         ArrayList<Long> foundSeeds = new ArrayList<>();
-        for(long seed = settings.startSeed; seed < settings.endSeed; seed++) {
+        for (long seed = settings.startSeed; seed < settings.endSeed; seed++) {
             if (runner.runSeed(seed)) {
                 foundSeeds.add(seed);
-                if(settings.verbose) {
+                if (settings.verbose) {
                     runner.getSeedResult().printSeedStats();
                 }
             }

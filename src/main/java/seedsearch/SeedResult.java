@@ -31,7 +31,7 @@ public class SeedResult {
         this.miscRewards = new ArrayList<>();
         this.shopRewards = new ArrayList<>();
         this.cardRewards = new ArrayList<>();
-        this.neowRewards= new ArrayList<>();
+        this.neowRewards = new ArrayList<>();
         this.events = new ArrayList<>();
         this.bosses = new ArrayList<>();
         this.monsters = new ArrayList<>();
@@ -105,16 +105,16 @@ public class SeedResult {
     }
 
     public boolean testFinalFilters(SearchSettings settings) {
-        if(numCombats > settings.maximumCombats) {
+        if (numCombats > settings.maximumCombats) {
             return false;
         }
-        if(numCombats < settings.minimumCombats) {
+        if (numCombats < settings.minimumCombats) {
             return false;
         }
-        if(numElites > settings.maximumElites) {
+        if (numElites > settings.maximumElites) {
             return false;
         }
-        if(numElites < settings.minimumElites) {
+        if (numElites < settings.minimumElites) {
             return false;
         }
         if (!events.containsAll(settings.requiredEvents)) {
@@ -134,21 +134,15 @@ public class SeedResult {
             return false;
         }
         ArrayList<String> allCards = getAllCardIds();
-        for(String card : settings.bannedAct1Cards)
-        {
-            if (allCards.contains(card))
-            {
+        for (String card : settings.bannedAct1Cards) {
+            if (allCards.contains(card)) {
                 return false;
             }
         }
-        for(String card : settings.requiredAct1Cards)
-        {
-            if (allCards.contains(card))
-            {
+        for (String card : settings.requiredAct1Cards) {
+            if (allCards.contains(card)) {
                 allCards.remove(card);
-            }
-            else
-            {
+            } else {
                 return false;
             }
         }
@@ -167,9 +161,6 @@ public class SeedResult {
                 allCards.add(card.cardID);
             }
         }
-        //for (AbstractCard card : AbstractDungeon.player.masterDeck.group) {
-        //    allCards.add(card.cardID);
-        //}
         return allCards;
     }
 
@@ -190,7 +181,7 @@ public class SeedResult {
 
         System.out.println(MessageFormat.format("Seed: {0} ({1})", SeedHelper.getString(seed), seed));
         System.out.println("Neow Options:");
-        for(NeowReward reward : neowRewards) {
+        for (NeowReward reward : neowRewards) {
             System.out.println(removeTextFormatting(reward.optionLabel));
         }
         System.out.println(MessageFormat.format("{0} combats ({1} elite(s)):", numCombats, numElites));
@@ -214,7 +205,7 @@ public class SeedResult {
         for (int i = 0; i < mapPath.size(); i++) {
             String mapPathItem = mapPath.get(i);
             String trueItem = trueMapPath.get(i);
-            if (mapPathItem.equals(trueItem)){
+            if (mapPathItem.equals(trueItem)) {
                 combinedMapPath.add(trueItem);
             } else {
                 combinedMapPath.add(String.format("%s/%s", mapPathItem, trueItem));
