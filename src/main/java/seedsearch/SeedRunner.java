@@ -932,7 +932,17 @@ public class SeedRunner {
                     Field eventCards = GremlinMatchGame.class.getDeclaredField("cards");
                     eventCards.setAccessible(true);
                     CardGroup gremlinCards = (CardGroup) eventCards.get(event);
-                    reward.addCards(gremlinCards.group);
+                    ArrayList<AbstractCard> matchCards = new ArrayList<>();
+                    ArrayList<String> pairs = new ArrayList<>();
+                    for (AbstractCard card : gremlinCards.group) {
+                        if (pairs.contains(card.cardID)) {
+                            pairs.remove(card.cardID);
+                        } else {
+                            pairs.add(card.cardID);
+                            matchCards.add(card);
+                        }
+                    }
+                    reward.addCards(matchCards);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
