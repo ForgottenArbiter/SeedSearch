@@ -561,6 +561,9 @@ public class SeedRunner {
                     String monster = AbstractDungeon.monsterList.remove(0);
                     seedResult.registerCombat(monster);
                     seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
+                    if (player.hasRelic(PrayerWheel.ID)) {
+                        seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
+                    }
                     int gold = AbstractDungeon.treasureRng.random(10, 20);
                     addGoldReward(gold);
                     AbstractPotion monsterPotion = getPotionReward();
