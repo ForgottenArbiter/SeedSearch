@@ -226,6 +226,9 @@ public class SeedRunner {
             player.masterDeck.removeCard(removedCard);
             addInvoluntaryCardReward(AbstractDungeon.getTransformedCard(), reward);
         }
+        if (neowOption.drawback == NeowReward.NeowRewardDrawback.CURSE) {
+            addInvoluntaryCardReward(AbstractDungeon.getCardWithoutRng(AbstractCard.CardRarity.CURSE), reward);
+        }
         seedResult.addMiscReward(reward);
     }
 
@@ -558,6 +561,9 @@ public class SeedRunner {
                     String monster = AbstractDungeon.monsterList.remove(0);
                     seedResult.registerCombat(monster);
                     seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
+                    if (player.hasRelic(PrayerWheel.ID)) {
+                        seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
+                    }
                     int gold = AbstractDungeon.treasureRng.random(10, 20);
                     addGoldReward(gold);
                     AbstractPotion monsterPotion = getPotionReward();
@@ -571,6 +577,7 @@ public class SeedRunner {
                     seedResult.addToTrueMapPath("E");
                     String elite = AbstractDungeon.eliteMonsterList.remove(0);
                     seedResult.registerEliteCombat(elite);
+                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                     AbstractRelic.RelicTier tier = AbstractDungeon.returnRandomRelicTier();
                     String relic = AbstractDungeon.returnRandomRelicKey(tier);
                     Reward relicReward = new Reward(AbstractDungeon.floorNum);
@@ -580,7 +587,6 @@ public class SeedRunner {
                         awardRelic(starRelic, relicReward);
                     }
                     seedResult.addMiscReward(relicReward);
-                    seedResult.addCardReward(AbstractDungeon.floorNum, AbstractDungeon.getRewardCards());
                     gold = AbstractDungeon.treasureRng.random(25, 35);
                     addGoldReward(gold);
                     AbstractPotion elitePotion = getPotionReward();
@@ -1083,7 +1089,7 @@ public class SeedRunner {
 
     private void addInvoluntaryCardReward(AbstractCard card, Reward reward) {
         reward.cards.add(card);
-        AbstractDungeon.player.masterDeck.addToBottom(card);
+        AbstractDungeon.player.masterDeck.addToTop(card);
     }
 
     private void loseRelic(String relicID) {
