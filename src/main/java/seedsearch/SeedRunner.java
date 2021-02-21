@@ -114,14 +114,15 @@ public class SeedRunner {
     }
 
     private boolean runSeed() {
+
+        AbstractDungeon exordium = new Exordium(player, new ArrayList<>());
+        ArrayList<MapRoomNode> exordiumPath = findMapPath(AbstractDungeon.map);
+
         if (!settings.speedrunPace) {
             CardCrawlGame.playtime = 900F;
         } else {
             CardCrawlGame.playtime = 0F;
         }
-
-        AbstractDungeon exordium = new Exordium(player, new ArrayList<>());
-        ArrayList<MapRoomNode> exordiumPath = findMapPath(AbstractDungeon.map);
 
         ArrayList<NeowReward> neowRewards = getNeowRewards();
         seedResult.addNeowRewards(neowRewards);
