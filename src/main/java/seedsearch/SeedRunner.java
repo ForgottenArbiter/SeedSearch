@@ -996,6 +996,23 @@ public class SeedRunner {
     private void getBossRewards() {
         AbstractDungeon.floorNum += 1;
         if (AbstractDungeon.floorNum > settings.highestFloor) {
+            if (settings.showBosses){
+                seedResult.registerBossCombat(AbstractDungeon.bossKey);
+                if (AbstractDungeon.ascensionLevel == 20 && currentAct == 2) {
+                    seedResult.registerBossCombat(AbstractDungeon.bossList.get(1));
+                }
+
+                if (currentAct < 2) {
+                    BossChest bossChest = new BossChest();
+                    ArrayList<String> bossRelicStrings = new ArrayList<>();
+                    for (AbstractRelic relic : bossChest.relics) {
+                        bossRelicStrings.add(relic.relicId);
+                    }
+                    seedResult.addBossReward(bossRelicStrings);
+                    Reward bossRelicReward = new Reward(AbstractDungeon.floorNum);
+                    seedResult.addMiscReward(bossRelicReward);
+                }
+            }
             return;
         }
         seedResult.registerBossCombat(AbstractDungeon.bossKey);

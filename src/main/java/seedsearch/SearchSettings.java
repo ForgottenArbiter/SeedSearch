@@ -26,6 +26,8 @@ public class SearchSettings {
     public boolean verbose = true;
     public boolean exitAfterSearch = false;
     public int highestFloor = 55;
+    public boolean showBosses = false;
+
 
     // Navigation
 
