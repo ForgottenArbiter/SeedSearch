@@ -109,7 +109,7 @@ These options control the criteria for deciding which seeds are selected as vali
 * **maximumElites**: The maximum number of elites which may be encountered
 * **minimumCombats**: The minimum number of combats (event combats, normal combats, elites, and bosses)
 * **maximumCombats**: The maximum number of combats
-* **maximumRestSites**: The minimum number of rest sites which must be encountered
+* **minimumRestSites**: The minimum number of rest sites which must be encountered
 
 ### Output filters
 
