@@ -4,6 +4,7 @@ import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.SeedHelper;
 import com.megacrit.cardcrawl.neow.NeowReward;
+import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.text.MessageFormat;
@@ -221,7 +222,12 @@ public class SeedResult {
         System.out.println("Potions:");
         for (Reward reward : miscRewards) {
             if (reward.potions.size() > 0) {
-                System.out.println(String.format("Floor %d: %s", reward.floor, reward.potions));
+                ArrayList<String> potionNames = new ArrayList<>();
+                for (AbstractPotion potion : reward.potions)
+                {
+                    potionNames.add(potion.ID);
+                }
+                System.out.println(String.format("Floor %d: %s", reward.floor, potionNames));
             }
         }
         System.out.println("Other cards:");

@@ -82,7 +82,7 @@ All of these control which actions are taken at various events in the game.
 * **takeMindBloomFight**: Whether to take the fight in the Mind Bloom event, if the gold was not taken
 * **takeMindBloomUpgrade**: Whether to take the upgrades in the Mind Bloom event, if the other options were not yet taken
 * **tradeGoldenIdolForMoney**: Whether to trade the Golden Idol for gold in the Moai Head event, if available
-* **takePortal**: Whether to take the portal straight to the boss in the Secret Portal event
+* **takePortal**: Whether to take the portal straight to the boss in the Secret Portal event (not implemented yet)
 * **numSensoryStoneCards**: How many cards to take in the Sensory Stone event (1 to 3)
 * **takeWindingHallsCurse**: Whether to take the curse in Winding Halls
 * **takeWindingHallsMadness**: Whether to take the Madness cards in Winding Halls
