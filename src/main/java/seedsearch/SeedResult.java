@@ -25,6 +25,7 @@ public class SeedResult {
     private ArrayList<String> relics;
     private int numElites;
     private int numCombats;
+    private int numRestSites;
     private long seed;
 
     public SeedResult(long seed) {
@@ -86,6 +87,10 @@ public class SeedResult {
         events.add(eventName);
     }
 
+    public void countRestSite() {
+        numRestSites++;
+    }
+
     public void addBossReward(ArrayList<String> bossRelics) {
         this.bossRelics.addAll(bossRelics);
     }
@@ -118,6 +123,9 @@ public class SeedResult {
         if (numElites < settings.minimumElites) {
             return false;
         }
+        if (numRestSites < settings.minimumRestSites) {
+            return false;
+        }
         if (!events.containsAll(settings.requiredEvents)) {
             return false;
         }
@@ -126,6 +134,14 @@ public class SeedResult {
         }
         if (!monsters.containsAll(settings.requiredCombats)) {
             return false;
+        }
+        ArrayList<String> allPotions = getAllPotionIds();
+        for (String potion : settings.requiredPotions) {
+            if (allPotions.contains(potion)){
+                allPotions.remove(potion);
+            } else{
+                return false;
+            }
         }
         return true;
     }
@@ -147,6 +163,14 @@ public class SeedResult {
                 return false;
             }
         }
+        ArrayList<String> allPotions = getAllPotionIds();
+        for (String potion : settings.requiredAct1Potions) {
+            if (allPotions.contains(potion)){
+                allPotions.remove(potion);
+            } else{
+                return false;
+            }
+        }
         return true;
     }
 
@@ -165,40 +189,75 @@ public class SeedResult {
         return allCards;
     }
 
+    private ArrayList<String> getAllPotionIds() {
+        ArrayList<String> allPotions = new ArrayList<>();
+        for (Reward reward : miscRewards) {
+            for (AbstractPotion potion : reward.potions){
+                allPotions.add(potion.ID);
+            }
+        }
+        return allPotions;
+    }
+
     private static String removeTextFormatting(String text) {
         text = text.replaceAll("~|@(\\S+)~|@", "$1");
         return text.replaceAll("#.|NL", "");
     }
 
-    public void printSeedStats() {
+    public void printSeedStats(SearchSettings settings) {
         ArrayList<String> shopRelics = new ArrayList<>();
         ArrayList<String> shopCards = new ArrayList<>();
+        ArrayList<String> shopPotions = new ArrayList<>();
         for (Reward shopReward : shopRewards) {
             shopRelics.addAll(shopReward.relics);
             for (AbstractCard card : shopReward.cards) {
                 shopCards.add(card.name);
             }
+            for (AbstractPotion potion : shopReward.potions)
+            {
+                shopPotions.add(potion.name);
+            }
         }
 
         System.out.println(MessageFormat.format("Seed: {0} ({1})", SeedHelper.getString(seed), seed));
-        System.out.println("Neow Options:");
-        for (NeowReward reward : neowRewards) {
-            System.out.println(removeTextFormatting(reward.optionLabel));
+        if (settings.showNeowOptions) {
+            System.out.println("Neow Options:");
+            for (NeowReward reward : neowRewards) {
+                System.out.println(removeTextFormatting(reward.optionLabel));
+            }
         }
-        System.out.println(MessageFormat.format("{0} combats ({1} elite(s)):", numCombats, numElites));
-        System.out.println(monsters);
-        System.out.println("Bosses:");
-        System.out.println(bosses);
-        System.out.println(MessageFormat.format("{0} relics:", relics.size()));
-        System.out.println(relics);
-        System.out.println("Shop relics:");
-        System.out.println(shopRelics);
-        System.out.println("Shop cards:");
-        System.out.println(shopCards);
-        System.out.println("Boss relics:");
-        System.out.println(bossRelics);
-        System.out.println("Events:");
-        System.out.println(events);
+        if (settings.showCombats) {
+            System.out.println(MessageFormat.format("{0} combats ({1} elite(s)):", numCombats, numElites));
+            System.out.println(monsters);
+        }
+        if (settings.showBosses) {
+            System.out.println("Bosses:");
+            System.out.println(bosses);
+        }
+        if (settings.showRelics) {
+            System.out.println(MessageFormat.format("{0} relics:", relics.size()));
+            System.out.println(relics);
+        }
+        if (settings.showShopRelics) {
+            System.out.println("Shop relics:");
+            System.out.println(shopRelics);
+        }
+        if (settings.showShopCards) {
+            System.out.println("Shop cards:");
+            System.out.println(shopCards);
+        }
+        if (settings.showShopPotions) {
+            System.out.println("Shop potions:");
+            System.out.println(shopPotions);
+        }
+        if (settings.showBossRelics) {
+            System.out.println("Boss relics:");
+            System.out.println(bossRelics);
+        }
+        if (settings.showEvents) {
+            System.out.println("Events:");
+            System.out.println(events);
+        }
         System.out.println("Map path:");
         System.out.println(mapPath);
         System.out.println("True map path:");
@@ -213,27 +272,32 @@ public class SeedResult {
             }
         }
         System.out.println(combinedMapPath);
-        System.out.println("Card choices:");
-        for (Reward reward : cardRewards) {
-            if (reward.cards.size() > 0) {
-                System.out.println(String.format("Floor %d: %s", reward.floor, reward.cards));
-            }
-        }
-        System.out.println("Potions:");
-        for (Reward reward : miscRewards) {
-            if (reward.potions.size() > 0) {
-                ArrayList<String> potionNames = new ArrayList<>();
-                for (AbstractPotion potion : reward.potions)
-                {
-                    potionNames.add(potion.ID);
+        if (settings.showCardChoices) {
+            System.out.println("Card choices:");
+            for (Reward reward : cardRewards) {
+                if (reward.cards.size() > 0) {
+                    System.out.println(String.format("Floor %d: %s", reward.floor, reward.cards));
                 }
-                System.out.println(String.format("Floor %d: %s", reward.floor, potionNames));
             }
         }
-        System.out.println("Other cards:");
-        for (Reward reward : miscRewards) {
-            if (reward.cards.size() > 0) {
-                System.out.println(String.format("Floor %d: %s", reward.floor, reward.cards));
+        if (settings.showPotions) {
+            System.out.println("Potions:");
+            for (Reward reward : miscRewards) {
+                if (reward.potions.size() > 0) {
+                    ArrayList<String> potionNames = new ArrayList<>();
+                    for (AbstractPotion potion : reward.potions) {
+                        potionNames.add(potion.name);
+                    }
+                    System.out.println(String.format("Floor %d: %s", reward.floor, potionNames));
+                }
+            }
+        }
+        if (settings.showOtherCards) {
+            System.out.println("Other cards:");
+            for (Reward reward : miscRewards) {
+                if (reward.cards.size() > 0) {
+                    System.out.println(String.format("Floor %d: %s", reward.floor, reward.cards));
+                }
             }
         }
         System.out.println("#####################################");

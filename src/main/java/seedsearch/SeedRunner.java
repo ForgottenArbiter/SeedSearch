@@ -621,6 +621,7 @@ public class SeedRunner {
                     break;
                 case REST:
                     seedResult.addToTrueMapPath("R");
+                    seedResult.countRestSite();
                     if (settings.useShovel && player.hasRelic(Shovel.ID)) {
                         Reward digReward = new Reward(AbstractDungeon.floorNum);
                         AbstractRelic.RelicTier digTier = AbstractDungeon.returnRandomRelicTier();
@@ -672,6 +673,12 @@ public class SeedRunner {
                 }
             }
             for (StorePotion potion : potions) {
+                if (settings.potionsToBuy.contains(potion.potion.ID) && potion.price <= player.gold){
+                    Reward shopPotionReward = new Reward(AbstractDungeon.floorNum);
+                    shopPotionReward.addPotion(potion.potion);
+                    seedResult.addMiscReward(shopPotionReward);
+                    addGoldReward(-potion.price);
+                }
                 shopReward.addPotion(potion.potion);
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -1003,7 +1010,7 @@ public class SeedRunner {
     private void getBossRewards() {
         AbstractDungeon.floorNum += 1;
         if (AbstractDungeon.floorNum > settings.highestFloor) {
-            if (settings.showBosses){
+            if (settings.checkBosses){
                 seedResult.registerBossCombat(AbstractDungeon.bossKey);
                 if (AbstractDungeon.ascensionLevel == 20 && currentAct == 2) {
                     seedResult.registerBossCombat(AbstractDungeon.bossList.get(1));

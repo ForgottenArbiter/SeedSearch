@@ -32,7 +32,7 @@ Some settings take lists of relics, cards, or events. For these settings, either
 * **verbose**: Whether to print out detailed information about each seed found
 * **exitAfterSearch** Set to true to cause the program to immediately exit after search every seed
 * **highestFloor** How many floors into the seed you want to search
-* **showBosses** Shows the bosses and boss relics even if you don't run the seed to their floor
+* **checkBosses** Shows the bosses and boss relics even if you don't run the seed to their floor
 
 ### Navigation
 
@@ -48,6 +48,7 @@ These room weights are used to determine which path is taken through each map. T
 ### General decisions
 
 * **relicsToBuy**: These are the only relics which will be bought, in order of priority.
+* **potionsToBuy**: These are the only potions which will be bought, in order of priority.
 * **cardsToBuy**: These are the only cards which will be bought, in order of priority.
 * **bossRelicsToTake**: These are the only boss relics which will be taken, in order of priority. All others will be skipped.
 * **neowChoice**: Which Neow option to choose (0 to 3). 0 is the first option and 3 is the last (boss relic trade).
@@ -99,13 +100,34 @@ These options control the criteria for deciding which seeds are selected as vali
 * **requiredAct1Cards**: The cards which must be present somewhere in Act 1
 * **bannedAct1Cards**: The cards which must not be present somewhere in Act 1
 * **requiredAct1Relics**: The relics which must be acquired somewhere in Act 1
+* **requiredAct1Potions**: The potions which must be acquired somewhere in Act 1
 * **requiredRelics**: The relics which must be acquired anywhere in the run
+* **requiredPotions**: The potions which must be acquired anywhere in the run
 * **requiredEvents**: The events which must be encountered somewhere in the run
 * **requiredCombats**: The combats which must be encountered somewhere in the run (e.g. "The Champ")
 * **minimumElites**: The minimum number of elites which must be encountered
 * **maximumElites**: The maximum number of elites which may be encountered
 * **minimumCombats**: The minimum number of combats (event combats, normal combats, elites, and bosses)
 * **maximumCombats**: The maximum number of combats
+* **maximumRestSites**: The minimum number of rest sites which must be encountered
+
+### Output filters
+
+These options control the information which is shown to the user when the program is executed.
+
+* **showNeowOptions**
+* **showCombats**
+* **showBosses**
+* **showRelics**
+* **showShopRelics**
+* **showShopCards**
+* **showShopPotions**
+* **showBossRelics**
+* **showEvents**
+* **showCardChoices**
+* **showPotions**
+* **showOtherCards**: Shows cards that the player obtains from events and relics.
+
 
 ## Caveats
 
@@ -113,7 +135,6 @@ When searching through seeds, many assumptions must be made about your choices a
 
 ## Current Major Restrictions
 
-- Potions have some basic support now, but it is incomplete.
 - Default seed filtering is very limited. To do something complicated, you must program it yourself.
 - There is no checking to make sure that you can actually make it to Act 4.
 

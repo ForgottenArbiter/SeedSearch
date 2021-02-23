@@ -18,7 +18,7 @@ public class SeedSearch {
             if (runner.runSeed(seed)) {
                 foundSeeds.add(seed);
                 if (settings.verbose) {
-                    runner.getSeedResult().printSeedStats();
+                    runner.getSeedResult().printSeedStats(settings);
                 }
             }
         }
