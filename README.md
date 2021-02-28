@@ -32,7 +32,6 @@ Some settings take lists of relics, cards, or events. For these settings, either
 * **verbose**: Whether to print out detailed information about each seed found
 * **exitAfterSearch** Set to true to cause the program to immediately exit after search every seed
 * **highestFloor** How many floors into the seed you want to search
-* **checkBosses** Shows the bosses and boss relics even if you don't run the seed to their floor
 
 ### Navigation
 
@@ -127,7 +126,7 @@ These options control the information which is shown to the user when the progra
 * **showCardChoices**
 * **showPotions**
 * **showOtherCards**: Shows cards that the player obtains from events and relics.
-
+* **showRawRelicPools**: Shows the complete list of all relics in the seed.
 
 ## Caveats
 
