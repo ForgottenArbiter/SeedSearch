@@ -26,7 +26,6 @@ public class SearchSettings {
     public boolean verbose = true;
     public boolean exitAfterSearch = false;
     public int highestFloor = 55;
-    public boolean checkBosses = false;
 
 
     // Navigation
@@ -106,15 +105,16 @@ public class SearchSettings {
     public boolean showNeowOptions = true;
     public boolean showCombats = true;
     public boolean showBosses = true;
+    public boolean showBossRelics = true;
     public boolean showRelics = true;
     public boolean showShopRelics = true;
     public boolean showShopCards = true;
     public boolean showShopPotions = true;
-    public boolean showBossRelics = true;
     public boolean showEvents = true;
     public boolean showCardChoices = true;
     public boolean showPotions = true;
     public boolean showOtherCards = true;
+    public boolean showRawRelicPools = false;
 
     public SearchSettings() {
     }

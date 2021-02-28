@@ -9,6 +9,7 @@ import com.megacrit.cardcrawl.relics.AbstractRelic;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class SeedResult {
 
@@ -23,6 +24,11 @@ public class SeedResult {
     private ArrayList<String> trueMapPath;
     private ArrayList<String> bossRelics;
     private ArrayList<String> relics;
+    private ArrayList<String> rawCommonRelics;
+    private ArrayList<String> rawUncommonRelics;
+    private ArrayList<String> rawRareRelics;
+    private ArrayList<String> rawBossRelics;
+    private ArrayList<String> rawShopRelics;
     private int numElites;
     private int numCombats;
     private int numRestSites;
@@ -108,6 +114,26 @@ public class SeedResult {
         for (AbstractRelic relic : AbstractDungeon.player.relics) {
             relics.add(relic.relicId);
         }
+    }
+
+    public void SetCommonRelicPool(ArrayList<String> relics){
+        rawCommonRelics = new ArrayList<>(relics);
+    }
+
+    public void SetUncommonRelicPool(ArrayList<String> relics){
+        rawUncommonRelics = new ArrayList<>(relics);
+    }
+
+    public void SetRareRelicPool(ArrayList<String> relics){
+        rawRareRelics = new ArrayList<>(relics);
+    }
+
+    public void SetBossRelicPool(ArrayList<String> relics){
+        rawBossRelics = new ArrayList<>(relics);
+    }
+
+    public void SetShopRelicPool(ArrayList<String> relics){
+        rawShopRelics = new ArrayList<>(relics);
     }
 
     public boolean testFinalFilters(SearchSettings settings) {
@@ -234,6 +260,10 @@ public class SeedResult {
             System.out.println("Bosses:");
             System.out.println(bosses);
         }
+        if (settings.showBossRelics) {
+            System.out.println("Boss relics:");
+            System.out.println(bossRelics);
+        }
         if (settings.showRelics) {
             System.out.println(MessageFormat.format("{0} relics:", relics.size()));
             System.out.println(relics);
@@ -249,10 +279,6 @@ public class SeedResult {
         if (settings.showShopPotions) {
             System.out.println("Shop potions:");
             System.out.println(shopPotions);
-        }
-        if (settings.showBossRelics) {
-            System.out.println("Boss relics:");
-            System.out.println(bossRelics);
         }
         if (settings.showEvents) {
             System.out.println("Events:");
@@ -299,6 +325,18 @@ public class SeedResult {
                     System.out.println(String.format("Floor %d: %s", reward.floor, reward.cards));
                 }
             }
+        }
+        if (settings.showRawRelicPools) {
+            System.out.println("Raw common relic list:");
+            System.out.println(rawCommonRelics);
+            System.out.println("Raw uncommon relic list:");
+            System.out.println(rawUncommonRelics);
+            System.out.println("Raw rare relic list:");
+            System.out.println(rawRareRelics);
+            System.out.println("Raw boss relic list:");
+            System.out.println(rawBossRelics);
+            System.out.println("Raw shop relic list:");
+            System.out.println(rawShopRelics);
         }
         System.out.println("#####################################");
     }
