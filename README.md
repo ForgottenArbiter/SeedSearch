@@ -114,19 +114,19 @@ These options control the criteria for deciding which seeds are selected as vali
 
 These options control the information which is shown to the user when the program is executed.
 
-* **showNeowOptions**
-* **showCombats**
-* **showBosses**
-* **showRelics**
-* **showShopRelics**
-* **showShopCards**
-* **showShopPotions**
-* **showBossRelics**
-* **showEvents**
-* **showCardChoices**
-* **showPotions**
-* **showOtherCards**: Shows cards that the player obtains from events and relics.
-* **showRawRelicPools**: Shows the complete list of all relics in the seed.
+* **showNeowOptions**: Shows the neow options that are available
+* **showCombats**: Shows the monsters and elite monsters that are fought in order
+* **showBosses**: Shows the bosses that are fought
+* **showRelics**: Shows the relics obtained
+* **showShopRelics**: Shows the relics available in the shops
+* **showShopCards**: Shows the cards available in the shops
+* **showShopPotions**: Shows the potions available in the shops
+* **showBossRelics**: Shows the potential boss relics
+* **showEvents**: Shows the names of the events
+* **showCardChoices**: Shows the cards that the player can choose from rewards
+* **showPotions**: Shows the potions obtained from combats and events
+* **showOtherCards**: Shows cards that the player obtains from events and relics
+* **showRawRelicPools**: Shows the complete list of all relics in the seed
 
 ## Caveats
 
