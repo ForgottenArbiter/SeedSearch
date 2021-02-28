@@ -126,7 +126,7 @@ These options control the information which is shown to the user when the progra
 * **showCardChoices**: Shows the cards that the player can choose from rewards
 * **showPotions**: Shows the potions obtained from combats and events
 * **showOtherCards**: Shows cards that the player obtains from events and relics
-* **showRawRelicPools**: Shows the complete list of all relics in the seed
+* **showRawRelicPools**: Shows the complete list of all relics in the seed in the order they're obtained
 
 ## Caveats
 
