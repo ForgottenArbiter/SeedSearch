@@ -1,13 +1,12 @@
 package seedsearch;
 
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.events.beyond.*;
 import com.megacrit.cardcrawl.events.city.*;
 import com.megacrit.cardcrawl.events.exordium.*;
 import com.megacrit.cardcrawl.events.shrines.*;
-import com.megacrit.cardcrawl.helpers.CardLibrary;
-import com.megacrit.cardcrawl.helpers.EventHelper;
-import com.megacrit.cardcrawl.helpers.MonsterHelper;
-import com.megacrit.cardcrawl.helpers.RelicLibrary;
+import com.megacrit.cardcrawl.helpers.*;
+import com.megacrit.cardcrawl.localization.PotionStrings;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import seedsearch.patches.MonsterHelperPatch;
 
@@ -73,6 +72,7 @@ public class IdChecker {
 
     private static HashMap<String, String> eventMap;
     private static HashMap<String, String> cardMap;
+    private static HashMap<String, String> potionMap;
     private static HashMap<String, String> relicMap;
     private static HashMap<String, String> encounterMap;
 
@@ -86,6 +86,12 @@ public class IdChecker {
         cardMap = new HashMap<>();
         for (String id : cardIdSet) {
             cardMap.put(CardLibrary.cards.get(id).name, id);
+        }
+
+        potionMap = new HashMap<>();
+        for (String id : PotionHelper.getPotions(AbstractPlayer.PlayerClass.IRONCLAD, true))
+        {
+            potionMap.put(PotionHelper.getPotion(id).name, id);
         }
 
         relicMap = new HashMap<>();
@@ -136,6 +142,10 @@ public class IdChecker {
 
     public static ArrayList<String> findBadCardIds(ArrayList<String> ids) {
         return findBadIds(cardMap, ids);
+    }
+
+    public static ArrayList<String> findBadPotionIds(ArrayList<String> ids) {
+        return findBadIds(potionMap, ids);
     }
 
     public static ArrayList<String> findBadRelicIds(ArrayList<String> ids) {

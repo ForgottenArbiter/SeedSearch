@@ -124,6 +124,15 @@ public class SeedRunner {
             CardCrawlGame.playtime = 0F;
         }
 
+        if (settings.showRawRelicPools)
+        {
+            seedResult.SetCommonRelicPool(AbstractDungeon.commonRelicPool);
+            seedResult.SetUncommonRelicPool(AbstractDungeon.uncommonRelicPool);
+            seedResult.SetRareRelicPool(AbstractDungeon.rareRelicPool);
+            seedResult.SetBossRelicPool(AbstractDungeon.bossRelicPool);
+            seedResult.SetShopRelicPool(AbstractDungeon.shopRelicPool);
+        }
+
         ArrayList<NeowReward> neowRewards = getNeowRewards();
         seedResult.addNeowRewards(neowRewards);
         if (settings.neowChoice < 0 || settings.neowChoice > 3) {
@@ -621,6 +630,7 @@ public class SeedRunner {
                     break;
                 case REST:
                     seedResult.addToTrueMapPath("R");
+                    seedResult.countRestSite();
                     if (settings.useShovel && player.hasRelic(Shovel.ID)) {
                         Reward digReward = new Reward(AbstractDungeon.floorNum);
                         AbstractRelic.RelicTier digTier = AbstractDungeon.returnRandomRelicTier();
@@ -672,6 +682,12 @@ public class SeedRunner {
                 }
             }
             for (StorePotion potion : potions) {
+                if (settings.potionsToBuy.contains(potion.potion.ID) && potion.price <= player.gold){
+                    Reward shopPotionReward = new Reward(AbstractDungeon.floorNum);
+                    shopPotionReward.addPotion(potion.potion);
+                    seedResult.addMiscReward(shopPotionReward);
+                    addGoldReward(-potion.price);
+                }
                 shopReward.addPotion(potion.potion);
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {

@@ -47,6 +47,7 @@ These room weights are used to determine which path is taken through each map. T
 ### General decisions
 
 * **relicsToBuy**: These are the only relics which will be bought, in order of priority.
+* **potionsToBuy**: These are the only potions which will be bought, in order of priority.
 * **cardsToBuy**: These are the only cards which will be bought, in order of priority.
 * **bossRelicsToTake**: These are the only boss relics which will be taken, in order of priority. All others will be skipped.
 * **neowChoice**: Which Neow option to choose (0 to 3). 0 is the first option and 3 is the last (boss relic trade).
@@ -98,13 +99,34 @@ These options control the criteria for deciding which seeds are selected as vali
 * **requiredAct1Cards**: The cards which must be present somewhere in Act 1
 * **bannedAct1Cards**: The cards which must not be present somewhere in Act 1
 * **requiredAct1Relics**: The relics which must be acquired somewhere in Act 1
+* **requiredAct1Potions**: The potions which must be acquired somewhere in Act 1
 * **requiredRelics**: The relics which must be acquired anywhere in the run
+* **requiredPotions**: The potions which must be acquired anywhere in the run
 * **requiredEvents**: The events which must be encountered somewhere in the run
 * **requiredCombats**: The combats which must be encountered somewhere in the run (e.g. "The Champ")
 * **minimumElites**: The minimum number of elites which must be encountered
 * **maximumElites**: The maximum number of elites which may be encountered
 * **minimumCombats**: The minimum number of combats (event combats, normal combats, elites, and bosses)
 * **maximumCombats**: The maximum number of combats
+* **minimumRestSites**: The minimum number of rest sites which must be encountered
+
+### Output filters
+
+These options control the information which is shown to the user when the program is executed.
+
+* **showNeowOptions**: Shows the neow options that are available
+* **showCombats**: Shows the monsters and elite monsters that are fought in order
+* **showBosses**: Shows the bosses that are fought
+* **showRelics**: Shows the relics obtained
+* **showShopRelics**: Shows the relics available in the shops
+* **showShopCards**: Shows the cards available in the shops
+* **showShopPotions**: Shows the potions available in the shops
+* **showBossRelics**: Shows the potential boss relics
+* **showEvents**: Shows the names of the events
+* **showCardChoices**: Shows the cards that the player can choose from rewards
+* **showPotions**: Shows the potions obtained from combats and events
+* **showOtherCards**: Shows cards that the player obtains from events and relics
+* **showRawRelicPools**: Shows the complete list of all relics in the seed in the order they're obtained
 
 ## Caveats
 
@@ -112,7 +134,6 @@ When searching through seeds, many assumptions must be made about your choices a
 
 ## Current Major Restrictions
 
-- Potions have some basic support now, but it is incomplete.
 - Default seed filtering is very limited. To do something complicated, you must program it yourself.
 - There is no checking to make sure that you can actually make it to Act 4.
 

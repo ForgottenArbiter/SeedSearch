@@ -27,6 +27,7 @@ public class SearchSettings {
     public boolean exitAfterSearch = false;
     public int highestFloor = 55;
 
+
     // Navigation
 
     public float eliteRoomWeight = 1.2f;
@@ -39,6 +40,7 @@ public class SearchSettings {
     // General decisions
 
     public ArrayList<String> relicsToBuy = new ArrayList<>(); // Use the ID for cards and relics
+    public ArrayList<String> potionsToBuy = new ArrayList<>();
     public ArrayList<String> cardsToBuy = new ArrayList<>();
     public ArrayList<String> bossRelicsToTake = new ArrayList<>(); // Give them in priority order to always take a relic
     public int neowChoice = 3; // 3 is the boss relic trade
@@ -87,13 +89,32 @@ public class SearchSettings {
     public ArrayList<String> requiredAct1Cards = new ArrayList<>();
     public ArrayList<String> bannedAct1Cards = new ArrayList<>();
     public ArrayList<String> requiredAct1Relics = new ArrayList<>();
+    public ArrayList<String> requiredAct1Potions = new ArrayList<>();
     public ArrayList<String> requiredRelics = new ArrayList<>();
+    public ArrayList<String> requiredPotions = new ArrayList<>();
     public ArrayList<String> requiredEvents = new ArrayList<>();
     public ArrayList<String> requiredCombats = new ArrayList<>();
     public int minimumElites = 0;
     public int maximumElites = 1;
     public int minimumCombats = 0;
     public int maximumCombats = 33;
+    public int minimumRestSites = 0;
+
+    // Output filters
+
+    public boolean showNeowOptions = true;
+    public boolean showCombats = true;
+    public boolean showBosses = true;
+    public boolean showBossRelics = true;
+    public boolean showRelics = true;
+    public boolean showShopRelics = true;
+    public boolean showShopCards = true;
+    public boolean showShopPotions = true;
+    public boolean showEvents = true;
+    public boolean showCardChoices = true;
+    public boolean showPotions = true;
+    public boolean showOtherCards = true;
+    public boolean showRawRelicPools = false;
 
     public SearchSettings() {
     }
@@ -150,6 +171,11 @@ public class SearchSettings {
         cardLists.add(requiredAct1Cards);
         cardLists.add(bannedAct1Cards);
 
+        ArrayList<ArrayList<String>> potionLists = new ArrayList<>();
+        potionLists.add(potionsToBuy);
+        potionLists.add(requiredAct1Potions);
+        potionLists.add(requiredPotions);
+
         ArrayList<ArrayList<String>> eventLists = new ArrayList<>();
         eventLists.add(requiredEvents);
 
@@ -170,6 +196,14 @@ public class SearchSettings {
             ArrayList<String> mistakes = IdChecker.findBadCardIds(cardList);
             if (mistakes.size() > 0) {
                 System.out.println(String.format("WARNING: Bad card ids/names found: %s", mistakes));
+                mistakesMade = true;
+            }
+        }
+
+        for (ArrayList<String> potionList : potionLists) {
+            ArrayList<String> mistakes = IdChecker.findBadPotionIds(potionList);
+            if (mistakes.size() > 0) {
+                System.out.println(String.format("WARNING: Bad potion ids/names found: %s", mistakes));
                 mistakesMade = true;
             }
         }
