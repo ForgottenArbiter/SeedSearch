@@ -4,10 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>seedsearch</groupId>
-    <artifactId>SeedSearch</artifactId>
+    <artifactId>SeedSearch-Verification</artifactId>
     <version>1.2.1</version>
     <packaging>jar</packaging>
-    <name>SeedSearch</name>
+    <name>SeedSearch-Verification</name>
     <description>Finds seeds with desired properties</description>
 
     <properties>
@@ -40,7 +40,7 @@
     </dependencies>
 
     <build>
-        <finalName>SeedSearch</finalName>
+        <finalName>SeedSearch-Verification</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -56,7 +56,7 @@
                         <configuration>
                             <filters>
                                 <filter>
-                                    <artifact>seedsearch:SeedSearch</artifact>
+                                    <artifact>seedsearch:SeedSearch-Verification</artifact>
                                 </filter>
                             </filters>
                         </configuration>
@@ -73,7 +73,7 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <copy file="target/SeedSearch.jar" tofile="../_ModTheSpire/mods/SeedSearch.jar"/>
+                                <copy file="target/SeedSearch-Verification.jar" tofile="../_ModTheSpire/mods/SeedSearch-Verification.jar"/>
                             </target>
                         </configuration>
                         <goals>

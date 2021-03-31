@@ -20,6 +20,7 @@ import com.megacrit.cardcrawl.helpers.EventHelper;
 import com.megacrit.cardcrawl.helpers.PotionHelper;
 import com.megacrit.cardcrawl.helpers.RelicLibrary;
 import com.megacrit.cardcrawl.map.MapEdge;
+import com.megacrit.cardcrawl.map.MapGenerator;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.neow.NeowEvent;
 import com.megacrit.cardcrawl.neow.NeowReward;
@@ -71,7 +72,7 @@ public class SeedRunner {
         CharacterManager characterManager = new CharacterManager();
         CardCrawlGame.characterManager = characterManager;
         characterManager.setChosenCharacter(settings.playerClass);
-        currentSeed = settings.startSeed;
+        currentSeed = 0;
         AbstractDungeon.ascensionLevel = settings.ascensionLevel;
         Settings.seedSet = true;
         this.settings.checkIds();
@@ -117,6 +118,7 @@ public class SeedRunner {
 
         AbstractDungeon exordium = new Exordium(player, new ArrayList<>());
         ArrayList<MapRoomNode> exordiumPath = findMapPath(AbstractDungeon.map);
+        System.out.println(MapGenerator.toString(AbstractDungeon.map, true));
 
         if (!settings.speedrunPace) {
             CardCrawlGame.playtime = 900F;
@@ -138,24 +140,29 @@ public class SeedRunner {
         if (settings.neowChoice < 0 || settings.neowChoice > 3) {
             throw new RuntimeException("The 'neowChoice' setting must be between 0 and 3.");
         }
-        claimNeowReward(neowRewards.get(settings.neowChoice));
+        NeowReward neowReward;
+        if (settings.forceNeowLament) {
+            neowReward = new NeowReward(true);
+        } else {
+            neowReward = neowRewards.get(settings.neowChoice);
+        }
+        claimNeowReward(neowReward);
 
         runPath(exordiumPath);
         getBossRewards();
 
         seedResult.updateRelics();
-        if (!seedResult.testAct1Filters(settings)) {
-            return false;
-        }
 
         currentAct += 1;
         AbstractDungeon city = new TheCity(player, AbstractDungeon.specialOneTimeEventList);
+        System.out.println(MapGenerator.toString(AbstractDungeon.map, true));
         ArrayList<MapRoomNode> cityPath = findMapPath(AbstractDungeon.map);
         runPath(cityPath);
         getBossRewards();
 
         currentAct += 1;
         AbstractDungeon beyond = new TheBeyond(player, AbstractDungeon.specialOneTimeEventList);
+        System.out.println(MapGenerator.toString(AbstractDungeon.map, true));
         ArrayList<MapRoomNode> beyondPath = findMapPath(AbstractDungeon.map);
         runPath(beyondPath);
         getBossRewards();

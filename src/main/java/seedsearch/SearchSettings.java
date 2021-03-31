@@ -15,17 +15,19 @@ import java.util.ArrayList;
 
 public class SearchSettings {
 
-    private static final String configName = "searchConfig.json";
+    private static final String configName = "verificationConfig.json";
 
     // Core search parameters
 
     public int ascensionLevel = 0;
     public AbstractPlayer.PlayerClass playerClass = AbstractPlayer.PlayerClass.IRONCLAD;
-    public long startSeed = 0L;
-    public long endSeed = 100L;
-    public boolean verbose = true;
+    public String alphanumericSeed = "0";
     public boolean exitAfterSearch = false;
     public int highestFloor = 55;
+    public int ironcladUnlocks = 0;
+    public int silentUnlocks = 0;
+    public int defectUnlocks = 0;
+    public int watcherUnlocks = 0;
 
 
     // Navigation
@@ -43,6 +45,7 @@ public class SearchSettings {
     public ArrayList<String> potionsToBuy = new ArrayList<>();
     public ArrayList<String> cardsToBuy = new ArrayList<>();
     public ArrayList<String> bossRelicsToTake = new ArrayList<>(); // Give them in priority order to always take a relic
+    public boolean forceNeowLament = true; // Overrides Neow option below
     public int neowChoice = 3; // 3 is the boss relic trade
     public boolean useShovel = false;
     public boolean speedrunPace = true; // Do you reach Act 3 fast enough to skip Secret Portal?
@@ -114,7 +117,7 @@ public class SearchSettings {
     public boolean showCardChoices = true;
     public boolean showPotions = true;
     public boolean showOtherCards = true;
-    public boolean showRawRelicPools = false;
+    public boolean showRawRelicPools = true;
 
     public SearchSettings() {
     }
