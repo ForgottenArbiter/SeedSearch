@@ -44,6 +44,7 @@ public class SearchSettings {
     public ArrayList<String> cardsToBuy = new ArrayList<>();
     public ArrayList<String> bossRelicsToTake = new ArrayList<>(); // Give them in priority order to always take a relic
     public int neowChoice = 3; // 3 is the boss relic trade
+    public boolean forceNeowLament = false;
     public boolean useShovel = false;
     public boolean speedrunPace = true; // Do you reach Act 3 fast enough to skip Secret Portal?
     public boolean act4 = false;

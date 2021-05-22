@@ -138,7 +138,13 @@ public class SeedRunner {
         if (settings.neowChoice < 0 || settings.neowChoice > 3) {
             throw new RuntimeException("The 'neowChoice' setting must be between 0 and 3.");
         }
-        claimNeowReward(neowRewards.get(settings.neowChoice));
+        NeowReward neowReward;
+        if (settings.forceNeowLament) {
+            neowReward = new NeowReward(true);
+        } else {
+            neowReward = neowRewards.get(settings.neowChoice);
+        }
+        claimNeowReward(neowReward);
 
         runPath(exordiumPath);
         getBossRewards();
