@@ -25,9 +25,12 @@ public class SearchSettings {
     public boolean exitAfterSearch = false;
     public int highestFloor = 55;
     public int ironcladUnlocks = 0;
-    public int silentUnlocks = 0;
-    public int defectUnlocks = 0;
-    public int watcherUnlocks = 0;
+    public int silentUnlocks = 5;
+    public int defectUnlocks = 3;
+    public int watcherUnlocks = 1;
+    public int firstBoss = 2;
+    public int secondBoss = 2;
+    public int thirdBoss = 2;
 
 
     // Navigation

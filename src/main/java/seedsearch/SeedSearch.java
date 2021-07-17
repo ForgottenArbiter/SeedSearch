@@ -13,13 +13,30 @@ public class SeedSearch {
     public static boolean loadingEnabled = true;
     public static SearchSettings settings = SearchSettings.loadSettings();
 
+    private static void unlockBosses(String[] bosslist, int unlockLevel) {
+        for (int i = 0; i < unlockLevel; i++) {
+            if (i >= 3) {
+                break;
+            }
+            UnlockTracker.unlockPref.putInteger(bosslist[i], 2);
+            UnlockTracker.bossSeenPref.putInteger(bosslist[i], 1);
+        }
+    }
+
     public static void search() {
         loadingEnabled = false;
-        String[] expectedBaseUnlocks = {"CROW", "AUTOMATON", "SLIME", "CHAMP", "WIZARD", "DONUT", "GUARDIAN", "GHOST", "COLLECTOR", "The Silent", "Defect", "Watcher"};
+        String[] expectedBaseUnlocks = {"The Silent", "Defect", "Watcher"};
+        String[] firstBossUnlocks = {"GUARDIAN", "GHOST", "SLIME"};
+        String[] secondBossUnlocks = {"CHAMP", "AUTOMATON", "COLLECTOR"};
+        String[] thirdBossUnlocks = {"CROW", "DONUT", "WIZARD"};
         UnlockTracker.unlockPref.data.clear();
+        UnlockTracker.bossSeenPref.data.clear();
         for (String key : expectedBaseUnlocks) {
             UnlockTracker.unlockPref.putInteger(key, 2);
         }
+        unlockBosses(firstBossUnlocks, settings.firstBoss);
+        unlockBosses(secondBossUnlocks, settings.secondBoss);
+        unlockBosses(thirdBossUnlocks, settings.thirdBoss);
         UnlockTracker.resetUnlockProgress(AbstractPlayer.PlayerClass.IRONCLAD);
         UnlockTracker.unlockProgress.putInteger("IRONCLADUnlockLevel", settings.ironcladUnlocks);
         UnlockTracker.resetUnlockProgress(AbstractPlayer.PlayerClass.THE_SILENT);
