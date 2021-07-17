@@ -26,6 +26,13 @@ public class SearchSettings {
     public boolean verbose = true;
     public boolean exitAfterSearch = false;
     public int highestFloor = 55;
+    public int ironcladUnlocks = 5;
+    public int silentUnlocks = 5;
+    public int defectUnlocks = 5;
+    public int watcherUnlocks = 5;
+    public int firstBoss = 3;
+    public int secondBoss = 3;
+    public int thirdBoss = 3;
 
 
     // Navigation
@@ -43,8 +50,8 @@ public class SearchSettings {
     public ArrayList<String> potionsToBuy = new ArrayList<>();
     public ArrayList<String> cardsToBuy = new ArrayList<>();
     public ArrayList<String> bossRelicsToTake = new ArrayList<>(); // Give them in priority order to always take a relic
+    public boolean forceNeowLament = true; // Overrides Neow option below
     public int neowChoice = 3; // 3 is the boss relic trade
-    public boolean forceNeowLament = false;
     public boolean useShovel = false;
     public boolean speedrunPace = true; // Do you reach Act 3 fast enough to skip Secret Portal?
     public boolean act4 = false;
