@@ -51,6 +51,7 @@ These room weights are used to determine which path is taken through each map. T
 * **cardsToBuy**: These are the only cards which will be bought, in order of priority.
 * **bossRelicsToTake**: These are the only boss relics which will be taken, in order of priority. All others will be skipped.
 * **neowChoice**: Which Neow option to choose (0 to 3). 0 is the first option and 3 is the last (boss relic trade).
+* **forceNeowLament**: Limits the Neow options to max HP and Neow's Lament.
 * **useShovel**: Whether to dig at rest sites whenever available.
 * **speedrunPace**: If set to true, then the secret portal event will not spawn.
 * **act4**: If set to true, then the runs will include Act 4. Note that there is no check to ensure that Act 4 can be unlocked with the selected path.
