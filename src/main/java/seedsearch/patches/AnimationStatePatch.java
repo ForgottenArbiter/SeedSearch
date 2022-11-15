@@ -10,7 +10,7 @@ import com.evacipated.cardcrawl.modthespire.lib.SpirePatch;
 )
 public class AnimationStatePatch {
 
-    public AnimationState.TrackEntry Replace(AnimationState _instance, int arg1, String arg2, boolean arg3) {
+    public static AnimationState.TrackEntry Replace(AnimationState _instance, int arg1, String arg2, boolean arg3) {
         return new AnimationState.TrackEntry();
     }
 
