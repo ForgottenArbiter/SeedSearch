@@ -267,6 +267,11 @@ public class SeedRunner {
         switch (relicKey) {
             case TinyHouse.ID:
                 seedResult.addCardReward(reward.floor, AbstractDungeon.getRewardCards());
+                Reward tinyHouseReward = new Reward(AbstractDungeon.floorNum);
+                AbstractDungeon.miscRng.random(); // Random call for gold generation
+                AbstractPotion tinyHousePotion = PotionHelper.getRandomPotion(AbstractDungeon.miscRng);
+                tinyHouseReward.addPotion(tinyHousePotion);
+                seedResult.addMiscReward(tinyHouseReward);
                 addGoldReward(50);
                 break;
             case WingBoots.ID:

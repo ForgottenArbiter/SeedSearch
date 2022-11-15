@@ -12,7 +12,7 @@ import java.util.List;
                 List.class, List.class, int.class, int.class, int.class, int.class, int.class, int.class}
 )
 public class LogMetricPatch {
-    public void Replace(String eventName, String playerChoice, List<String> cardsObtained, List<String> cardsRemoved,
+    public static void Replace(String eventName, String playerChoice, List<String> cardsObtained, List<String> cardsRemoved,
                         List<String> cardsTransformed, List<String> cardsUpgraded, List<String> relicsObtained,
                         List<String> potionsObtained, List<String> relicsLost, int damageTaken, int damageHealed,
                         int hpLoss, int hpGain, int goldGain, int goldLoss) {

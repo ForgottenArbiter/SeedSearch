@@ -24,13 +24,13 @@ public class SearchSettings {
     public String alphanumericSeed = "0";
     public boolean exitAfterSearch = false;
     public int highestFloor = 55;
-    public int ironcladUnlocks = 0;
+    public int ironcladUnlocks = 5;
     public int silentUnlocks = 5;
-    public int defectUnlocks = 3;
-    public int watcherUnlocks = 1;
-    public int firstBoss = 2;
-    public int secondBoss = 2;
-    public int thirdBoss = 2;
+    public int defectUnlocks = 5;
+    public int watcherUnlocks = 5;
+    public int firstBoss = 3;
+    public int secondBoss = 3;
+    public int thirdBoss = 3;
 
 
     // Navigation
