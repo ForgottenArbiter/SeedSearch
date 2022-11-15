@@ -32,6 +32,13 @@ Some settings take lists of relics, cards, or events. For these settings, either
 * **verbose**: Whether to print out detailed information about each seed found
 * **exitAfterSearch** Set to true to cause the program to immediately exit after search every seed
 * **highestFloor** How many floors into the seed you want to search
+* **ironcladUnlocks** How many unlocks are available for the Ironclad (0 to 5)
+* **silentUnlocks** How many unlocks are available for the Silent (0 to 5)
+* **defectUnlocks** How many unlocks are available for the Defect (0 to 5)
+* **watcherUnlocks** How many unlocks are available for the Watcher (0 to 5)
+* **firstBoss** How many act 1 bosses have been seen (0 to 3)
+* **secondBoss** How many act 2 bosses have been seen (0 to 3)
+* **thirdBoss** How many act 3 bosses have been seen (0 to 3)
 
 ### Navigation
 
