@@ -138,7 +138,8 @@ public class SearchSettings {
             File file = new File(configName);
             if (file.exists()) {
                 Gson gson = new Gson();
-                return gson.fromJson(new FileReader(file), SearchSettings.class);
+                SearchSettings settings = gson.fromJson(new FileReader(file), SearchSettings.class);
+                return settings;
             } else {
                 SearchSettings settings = new SearchSettings();
                 settings.setDefaults();

@@ -1,7 +1,6 @@
 package seedsearch;
 
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
-import com.megacrit.cardcrawl.helpers.SeedHelper;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
 
 import java.util.ArrayList;
@@ -23,9 +22,24 @@ public class SeedSearch {
         }
     }
 
+    private static boolean isPlayerClassValid(SearchSettings settings) {
+        if (settings.playerClass == null) {
+            System.out.println("Invalid playerClass specified in search settings.");
+            System.out.println("Possible values: ");
+            for (AbstractPlayer.PlayerClass c: AbstractPlayer.PlayerClass.values()) {
+                System.out.println(c.name());
+            }
+            return false;
+        }
+        return true;
+    }
+
     public static void search() {
         loadingEnabled = false;
         settings = SearchSettings.loadSettings();
+        if (!isPlayerClassValid(settings)) {
+            exit(1);
+        }
         String[] expectedBaseUnlocks = {"The Silent", "Defect", "Watcher"};
         String[] firstBossUnlocks = {"GUARDIAN", "GHOST", "SLIME"};
         String[] secondBossUnlocks = {"CHAMP", "AUTOMATON", "COLLECTOR"};
