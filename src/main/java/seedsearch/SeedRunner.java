@@ -689,6 +689,9 @@ public class SeedRunner {
             for (AbstractCard card : shopReward.cards) {
                 if (settings.cardsToBuy.contains(card.cardID) && card.price <= player.gold) {
                     player.masterDeck.addToBottom(card);
+                    Reward shopCardReward = new Reward(AbstractDungeon.floorNum);
+                    shopCardReward.addCard(card);
+                    seedResult.addMiscReward(shopCardReward);
                     addGoldReward(-card.price);
                 }
             }
